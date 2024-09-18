@@ -1,4 +1,4 @@
-package com.assembler.custom;
+package com.assembler;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -32,7 +32,7 @@ public class Utils {
 
     public static void writeBinInstruction(String fileName, List<String> instructionSet) throws IOException{
         Path currentDir = Paths.get("").toAbsolutePath();
-        Path filePath = currentDir.resolve(fileName.replace(".asm", ".hack"));
+        Path filePath = currentDir.resolve("result.hack");
 
         File file = filePath.toFile();
         boolean newFile = file.createNewFile();

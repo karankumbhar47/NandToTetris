@@ -1,16 +1,14 @@
 package com.assembler;
 
-import com.assembler.custom.InstructionType;
-import org.w3c.dom.xpath.XPathResult;
-
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
 public class Parser {
+    public enum InstructionType {
+        A_INSTRUCTION, C_INSTRUCTION, L_INSTRUCTION
+    }
 
     private final BufferedReader reader;
     private String currentLine;

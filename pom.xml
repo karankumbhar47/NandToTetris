@@ -13,7 +13,7 @@
     <description>Assembler for Hack Assembly Language</description>
     <url>https://www.nand2tetris.org/</url>
 
-    <!--  generally used to set version of dependency   -->
+    <!--  generally used to set a version of dependency   -->
     <properties>
         <maven.compiler.source>22</maven.compiler.source>
         <maven.compiler.target>22</maven.compiler.target>

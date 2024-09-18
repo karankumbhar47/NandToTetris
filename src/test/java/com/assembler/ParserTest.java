@@ -1,6 +1,6 @@
 package com.assembler;
 
-import com.assembler.custom.InstructionType;
+import com.assembler.Parser.InstructionType;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;

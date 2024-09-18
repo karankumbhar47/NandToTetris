@@ -1,8 +1,6 @@
 package com.assembler;
 
-import com.assembler.custom.DataMap;
-import com.assembler.custom.InstructionType;
-import com.assembler.custom.Utils;
+import com.assembler.Parser.InstructionType;
 
 import java.io.IOException;
 import java.nio.file.Path;
@@ -97,7 +95,7 @@ public class HackAssembler {
             }
         }
 
-        logger.info("output File Created in current Directory with fileName as : " + fileName+".asm");
+        logger.info("output File Created in current Directory with fileName as : result.hack");
         Utils.writeBinInstruction(fileName, instructionSet);
     }
 

@@ -54,7 +54,7 @@ public class HackAssemblerTest {
     void testHackAssembler(String fileName) throws IOException {
         outputFileName = fileName.replace(".asm", ".hack");
         Path expectedFilePath = HACK_FILES_DIR.resolve(outputFileName);
-        Path outputFilePath = OUTPUT_DIR.resolve(outputFileName);
+        Path outputFilePath = OUTPUT_DIR.resolve("result.hack");
         Path inputFilePath = ASM_FILES_DIR.resolve(fileName);
 
         HackAssembler.main(new String[]{inputFilePath.toString()});

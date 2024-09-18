@@ -50,8 +50,4 @@ public class SymbolTable {
         symbolTable.put("THIS", 3);
         symbolTable.put("THAT", 4);
     }
-
-    public void showSymbolTable(){
-        System.out.println("Symbol table : "+symbolTable.toString());
-    }
 }
