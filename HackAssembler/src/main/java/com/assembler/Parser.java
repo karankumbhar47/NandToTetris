@@ -7,7 +7,8 @@ import java.nio.file.Path;
 
 public class Parser {
     public enum InstructionType {
-        A_INSTRUCTION, C_INSTRUCTION, L_INSTRUCTION
+        A_INSTRUCTION, C_INSTRUCTION, L_INSTRUCTION,
+        INVALID_INSTRUCTION
     }
 
     private final BufferedReader reader;
@@ -27,10 +28,13 @@ public class Parser {
             currentLine = reader.readLine();
             if(currentLine!=null)
                 currentLine = currentLine.trim();
-        }while (currentLine!=null && (currentLine.isEmpty() || currentLine.startsWith("//")));
+            else break;
+        }while (currentLine.isEmpty() || currentLine.startsWith("//"));
     }
 
     public InstructionType instructionType(){
+        if(currentLine==null) return InstructionType.INVALID_INSTRUCTION;
+
         if (currentLine.contains("@"))
             return InstructionType.A_INSTRUCTION;
         else if (currentLine.startsWith("(") && currentLine.endsWith(")"))

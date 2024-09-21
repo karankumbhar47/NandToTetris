@@ -36,6 +36,7 @@ public class HackAssembler {
         while (parser.hasMoreLines()) {
             parser.advance();
             InstructionType type = parser.instructionType();
+            if(type==InstructionType.INVALID_INSTRUCTION) continue;
 
             logger.fine("Processing line number " + lineNumber);
             if (type == InstructionType.L_INSTRUCTION) {
@@ -61,6 +62,7 @@ public class HackAssembler {
             parser.advance();
             String binaryInstruction;
             InstructionType type = parser.instructionType();
+            if(type==InstructionType.INVALID_INSTRUCTION) continue;
 
             logger.fine("Processing line number " + lineNumber);
             if (type == InstructionType.A_INSTRUCTION) {
