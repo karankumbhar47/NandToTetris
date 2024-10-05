@@ -5,70 +5,77 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.security.cert.TrustAnchor;
 import java.util.Objects;
 
 import com.vmTranslator.Parser.CommandType;
+import com.vmTranslator.VMExceptions.IndexData;
+import com.vmTranslator.VMExceptions.SyntaxExceptions;
+import com.vmTranslator.VMExceptions.SyntaxExceptions.*;
 
 public class CodeWriter {
-    private final BufferedWriter writer;
     private int labelID = 0;
-    private static final Path VM_FILES_DIR = Paths.get("src/main/resources/VMFiles");
-    private boolean isGTSet;
+    private final BufferedWriter writer;
+    private final Path outputFilePath;
+    public static boolean isTesting = false;
 
     CodeWriter(String fileName) throws IOException {
-        Path outputFilePath = VM_FILES_DIR.resolve(fileName);
+        if(!isTesting)
+            outputFilePath = Paths.get("").resolve("result.asm");
+        else
+            outputFilePath = Paths.get("src/main/resources/VMFiles").resolve(fileName);
+
         writer = new BufferedWriter(new FileWriter(outputFilePath.toFile()));
-        isGTSet = false;
     }
 
-    public void writeArithmetic(String command) throws IOException{
+
+    public void writeArithmetic(String command) throws IOException, SyntaxExceptions {
         String program = switch (command) {
-            case "add" -> Utils.binaryOprProgram(0);
-            case "sub" -> Utils.binaryOprProgram(1);
-            case "and" -> Utils.binaryOprProgram(2);
-            case "or" -> Utils.binaryOprProgram(3);
-            case "neg" -> Utils.unaryOprProgram(0);
-            case "not" -> Utils.unaryOprProgram(1);
-            case "gt" -> Utils.compOpProgram(0, labelID++);
-            case "lt" -> Utils.compOpProgram(1, labelID++);
-            case "eq" -> Utils.compOpProgram(2, labelID++);
-            default -> throw new IllegalArgumentException("Invalid Command " + command);
+            case "add","sub","and","or" -> Utils.binaryOprProgram(command);
+            case "neg","not" -> Utils.unaryOprProgram(command);
+            case "gt","lt","eq" -> Utils.compOpProgram(command, labelID++);
+            default -> throw new InvalidArithmeticCommandException(command);
         };
-        if(!program.isEmpty()) {
+        if (!program.isEmpty()) {
             writer.write(program);
             writer.flush();
         }
     }
 
-    public void writePushPop(CommandType commandType, String segment, int index) throws IOException{
-        String program;
-        boolean isAdderAddition = Objects.equals(segment, "local") ||
-                Objects.equals(segment, "argument") ||
-                Objects.equals(segment, "this") ||
-                Objects.equals(segment, "that");
 
-        if(commandType==CommandType.C_PUSH) {
-            if(Objects.equals(segment, "constant"))
-                program = Utils.pushConstProgram(segment,index);
-            else if (isAdderAddition)
-                program = Utils.pushAddProgram(segment, index);
-            else
-                program = Utils.pushProgram(segment, index);
-        }
-        else{
-            if (isAdderAddition)
-                program = Utils.popAddProgram(segment, index);
-            else
-                program = Utils.popProgram(segment, index);
-        }
+    public void writePushPop(CommandType commandType, String segment, int index) throws IOException, SyntaxExceptions {
+        if(IndexData.indexMap.containsKey(segment)) {
+            String program;
+            boolean isAdderAddition = Objects.equals(segment, "local") ||
+                    Objects.equals(segment, "argument") ||
+                    Objects.equals(segment, "this") ||
+                    Objects.equals(segment, "that");
 
-        writer.write(program);
-        writer.flush();
+            if (commandType == CommandType.C_PUSH) {
+                if (Objects.equals(segment, "constant"))
+                    program = Utils.pushConstProgram(index);
+                else if (isAdderAddition)
+                    program = Utils.pushAddProgram(segment, index);
+                else
+                    program = Utils.pushProgram(segment, index);
+            } else if (commandType == CommandType.C_POP) {
+                if (isAdderAddition)
+                    program = Utils.popAddProgram(segment, index);
+                else
+                    program = Utils.popProgram(segment, index);
+            } else
+                throw new InvalidCommandException(commandType.name());
+
+            writer.write(program);
+            writer.flush();
+        }
+        else
+            throw new InvalidSegmentException(segment);
     }
 
-    public void close() throws IOException{
-        if(writer!=null){
+
+    public void close() throws IOException {
+        System.out.println("Output file : "+outputFilePath.toAbsolutePath());
+        if (writer != null) {
             writer.flush();
             writer.close();
         }
