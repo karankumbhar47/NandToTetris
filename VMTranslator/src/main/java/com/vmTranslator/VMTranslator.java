@@ -11,7 +11,48 @@ import com.vmTranslator.VMExceptions.SyntaxExceptions.*;
 public class VMTranslator {
     public static void main(String[] args) throws IOException,SyntaxExceptions {
         Path filePath = Paths.get(args[0]);
-        firstPass(filePath);
+        boolean hasErrors  = ErrorPass(filePath);
+        if(!hasErrors)
+            firstPass(filePath);
+    }
+
+    private static boolean ErrorPass(Path filePath) throws IOException {
+        Parser parser = new Parser(filePath);
+        CodeWriter codeWriter = new CodeWriter(filePath.getFileName().toString().replace("vm", "asm"));
+        boolean hasErrors = false;
+
+        while (parser.hasMoreLines()) {
+            try {
+                parser.advance();
+                CommandType type = parser.commandType();
+                if (type == CommandType.C_NULL) continue;
+
+
+                switch (type) {
+                    case C_PUSH:
+                        codeWriter.writePushPop (CommandType.C_PUSH, parser.arg1(), parser.arg2(),parser.getContext());
+                        break;
+                    case C_POP:
+                        codeWriter.writePushPop(CommandType.C_POP, parser.arg1(), parser.arg2(),parser.getContext());
+                        break;
+                    case C_ARITHMETIC:
+                        codeWriter.writeArithmetic(parser.arg1(),parser.getContext());
+                        break;
+                    case C_NULL:
+                        throw new NuLLCommandFoundException(parser.getLineNumber(), parser.getCurrent_line());
+                    default:
+                        throw new InstructionNotHandled(type.name(),parser.getLineNumber(),parser.getCurrent_line());
+                }
+
+            } catch (Exception e) {
+                System.err.println(e.getMessage());
+                hasErrors = true;
+            }
+        }
+
+        parser.close();
+        codeWriter.close(true);
+        return hasErrors;
     }
 
 
@@ -29,22 +70,22 @@ public class VMTranslator {
 
             switch (type) {
                 case C_PUSH:
-                    codeWriter.writePushPop(CommandType.C_PUSH, parser.arg1(), parser.arg2());
+                    codeWriter.writePushPop (CommandType.C_PUSH, parser.arg1(), parser.arg2(),parser.getContext());
                     break;
                 case C_POP:
-                    codeWriter.writePushPop(CommandType.C_POP, parser.arg1(), parser.arg2());
+                    codeWriter.writePushPop(CommandType.C_POP, parser.arg1(), parser.arg2(),parser.getContext());
                     break;
                 case C_ARITHMETIC:
-                    codeWriter.writeArithmetic(parser.arg1());
+                    codeWriter.writeArithmetic(parser.arg1(),parser.getContext());
                     break;
                 case C_NULL:
-                    throw new NuLLCommandFoundException();
+                    throw new NuLLCommandFoundException(parser.getLineNumber(), parser.getCurrent_line());
                 default:
-                    throw new InstructionNotHandled(type.name());
+                    throw new InstructionNotHandled(type.name(),parser.getLineNumber(),parser.getCurrent_line());
             }
         }
 
-        codeWriter.close();
+        codeWriter.close(false);
         parser.close();
     }
 

@@ -1,10 +1,12 @@
-# <center>  HackAssembler Project </center>
+# <center>HackAssembler Project</center>
 
 ## Project Overview
 
-HackAssembler is a Java project which provides tool like Assembler for processing asm file and return corresponding hack file. This project uses
-Java for its main logic implementation and Maven for build automation and dependency management. The HackAssembler tool
-reads Hack assembly files, processes them, and generates corresponding Hack binary files in current directory.
+HackAssembler is a Java project that provides a tool like Assembler for processing an asm file
+and returns a corresponding hack file.
+This project uses Java for its main logic implementation and Maven for build automation and dependency management.
+The HackAssembler tool reads Hack assembly files, processes them,
+and generates corresponding Hack binary files in the current directory.
 
 ### Tools Used
 
@@ -13,7 +15,7 @@ reads Hack assembly files, processes them, and generates corresponding Hack bina
 - **JUnit**: For unit testing.
 
 ## Installation 
-To install Maven in your system use following command
+To install Maven in your system, use the following command
 ```bash
 sudo apt install maven
 ```

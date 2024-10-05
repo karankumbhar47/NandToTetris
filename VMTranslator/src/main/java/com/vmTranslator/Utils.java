@@ -7,12 +7,13 @@ import com.vmTranslator.VMExceptions.SyntaxExceptions;
 import com.vmTranslator.VMExceptions.SyntaxExceptions.*;
 
 public class Utils {
-    private static int maxMemoryCount = 24576;
+    private static final int maxMemoryCount = 24576;
 
-    private static void validateIndex(int index, int min, int max) throws InvalidIndexException {
-        if (index < min || index > max) {
-            throw new InvalidIndexException(index, min, max);
-        }
+    private static void validateIndex(int index, int max,Context context) throws SyntaxExceptions {
+        if(index<0)
+            throw  new NegativeIndexException(context.getLineNumber(),context.getCurrentLine());
+        if (index > max)
+            throw new IndexOutOfBondException(index, 0, max,context.getLineNumber(),context.getCurrentLine());
     }
 
     public static String cleanLine(String line) {
@@ -33,8 +34,8 @@ public class Utils {
     }
 
 
-    public static String pushAddProgram(String segment, int index) throws SyntaxExceptions {
-        validateIndex(index,0,maxMemoryCount);
+    public static String pushAddProgram(String segment, int index,Context context) throws SyntaxExceptions {
+        validateIndex(index, maxMemoryCount,context);
         StringBuilder sb = new StringBuilder();
         sb.append("@").append(index).append("\n");
         sb.append("D=A\n");
@@ -43,7 +44,8 @@ public class Utils {
             case "argument" -> sb.append("@ARG\n");
             case "this" -> sb.append("@THIS\n");
             case "that" -> sb.append("@THAT\n");
-            default -> throw new InvalidPushPopAddSegmentException(segment, Parser.CommandType.C_PUSH);
+            default -> throw new InvalidPushPopAddSegmentException
+                    (segment,context.getLineNumber(), context.getCurrentLine());
         }
         sb.append("A=D+M\n");
         sb.append("D=M\n");
@@ -56,17 +58,23 @@ public class Utils {
     }
     
 
-    public static String pushProgram(String segment, int index) throws  SyntaxExceptions{
-        validateIndex(index,0,maxMemoryCount);
+    public static String pushProgram(String segment, int index, Context context) throws  SyntaxExceptions{
+        validateIndex(index, maxMemoryCount,context);
         StringBuilder sb = new StringBuilder();
         switch (segment) {
             case "temp" -> {
+                validateIndex(index, 7,context);
                 sb.append("@").append(5 + index).append("\n");
-                validateIndex(index,0,7);
             }
-            case "static" -> sb.append("@Static.").append(index).append("\n");
-            case "pointer" -> sb.append("@").append((index == 0) ? "THIS" : "THAT").append("\n");
-            default -> throw new InvalidPushPopSegmentException(segment, Parser.CommandType.C_POP);
+            case "static" -> {
+                validateIndex(index, 239,context);
+                sb.append("@Static.").append(index).append("\n");
+            }
+            case "pointer" -> {
+                validateIndex(index, 1,context);
+                sb.append("@").append((index == 0) ? "THIS" : "THAT").append("\n");
+            }
+            default -> throw new InvalidPushPopSegmentException(segment,context.getLineNumber(),context.getCurrentLine());
         }
 
         sb.append("D=M\n");
@@ -79,8 +87,8 @@ public class Utils {
     }
 
 
-    public static String pushConstProgram(int index) {
-
+    public static String pushConstProgram(int index,Context context) throws  SyntaxExceptions{
+        validateIndex(index, maxMemoryCount,context);
         return "@" + index + "\n" +
                 "D=A\n" +
                 "@SP\n" +
@@ -91,29 +99,40 @@ public class Utils {
     }
 
 
-    public static String popProgram(String segment, int index) throws SyntaxExceptions{
+    public static String popProgram(String segment, int index,Context context) throws SyntaxExceptions{
+        validateIndex(index, maxMemoryCount,context);
         StringBuilder sb = new StringBuilder();
         sb.append("@SP\n");
         sb.append("AM=M-1\n");
         sb.append("D=M\n");
         switch (segment) {
-            case "temp" -> sb.append("@").append(5 + index).append("\n");
-            case "pointer" -> sb.append("@").append((index == 0) ? "THIS" : "THAT").append("\n");
-            case "static" -> sb.append("@Static.").append(index).append("\n");
-            default -> throw new InvalidPushPopSegmentException(segment, Parser.CommandType.C_POP);
+            case "temp" -> {
+                validateIndex(index, 7,context);
+                sb.append("@").append(5 + index).append("\n");
+            }
+            case "pointer" -> {
+                validateIndex(index, 1,context);
+                sb.append("@").append((index == 0) ? "THIS" : "THAT").append("\n");
+            }
+            case "static" -> {
+                validateIndex(index, 239,context);
+                sb.append("@Static.").append(index).append("\n");
+            }
+            default -> throw new InvalidPushPopSegmentException(segment, context.getLineNumber(), context.getCurrentLine());
         }
         sb.append("M=D\n");
         return sb.toString();
     }
 
 
-    public static String popAddProgram(String segment, int index) throws SyntaxExceptions{
+    public static String popAddProgram(String segment, int index,Context context) throws SyntaxExceptions{
+        validateIndex(index, maxMemoryCount,context);
         String segSymbol = switch (segment) {
             case "local" -> "LCL";
             case "argument" -> "ARG";
             case "this" -> "THIS";
             case "that" -> "THAT";
-            default -> throw new InvalidPushPopAddSegmentException(segment, Parser.CommandType.C_POP);
+            default -> throw new InvalidPushPopAddSegmentException(segment,context.getLineNumber(),context.getCurrentLine());
         };
 
         return "@" + index + "\n" +
@@ -131,7 +150,7 @@ public class Utils {
     }
 
 
-    public static String binaryOprProgram(String operation) throws SyntaxExceptions{
+    public static String binaryOprProgram(String operation,Context context) throws SyntaxExceptions{
         StringBuilder sb = new StringBuilder();
 
         sb.append("@SP\n");
@@ -155,7 +174,7 @@ public class Utils {
                 sb.append("M=D|M\n");
                 break;
             default:
-                throw new InvalidBinaryOperationException(operation);
+                throw new InvalidBinaryOperationException(operation,context.getLineNumber(),context.getCurrentLine());
         }
 
         sb.append("@SP\n");
@@ -168,7 +187,7 @@ public class Utils {
      * @param operation use to distinguish operation
      * @param labelId use to distinguish label
      */
-    public static String compOpProgram(String operation, int labelId) throws SyntaxExceptions {
+    public static String compOpProgram(String operation, int labelId,Context context) throws SyntaxExceptions {
         StringBuilder sb = new StringBuilder();
         sb.append("@SP\n");
         sb.append("AM=M-1\n");
@@ -182,7 +201,7 @@ public class Utils {
             case "gt" -> sb.append("D;JLT\n");
             case "lt" -> sb.append("D;JGT\n");
             case "eq" -> sb.append("D;JEQ\n");
-            default ->  throw new InvalidCompOperationException(operation);
+            default ->  throw new InvalidCompOperationException(operation,context.getLineNumber(),context.getCurrentLine());
         }
 
         sb.append("@SP\n");
@@ -206,7 +225,7 @@ public class Utils {
     }
 
 
-    public static String unaryOprProgram(String operation) throws SyntaxExceptions{
+    public static String unaryOprProgram(String operation,Context context) throws SyntaxExceptions{
         StringBuilder sb = new StringBuilder();
 
         sb.append("@SP\n");
@@ -214,7 +233,7 @@ public class Utils {
         switch (operation){
             case "neg" -> sb.append("M=-M\n");
             case "not" -> sb.append("M=!M\n");
-            default -> throw new InvalidUnaryOperationException(operation);
+            default -> throw new InvalidUnaryOperationException(operation, context.getLineNumber(),context.getCurrentLine());
         }
         sb.append("@SP\n");
         sb.append("M=M+1\n");

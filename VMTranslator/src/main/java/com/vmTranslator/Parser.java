@@ -19,12 +19,16 @@ public class Parser {
 
 
     private String current_line;
+    private int lineNumber;
     private final BufferedReader reader;
+    private final Context context;
 
 
     Parser(Path path) throws IOException {
         reader = Files.newBufferedReader(path);
         current_line = null;
+        lineNumber = 0;
+        context  = new Context(lineNumber, null);
     }
 
 
@@ -36,6 +40,10 @@ public class Parser {
     public void advance() throws IOException {
         do {
             current_line = reader.readLine();
+            lineNumber++;
+
+            context.setLineNumber(lineNumber);
+            context.setCurrentLine(current_line);
             if (current_line == null) break;
             current_line = Utils.cleanLine(current_line);
         } while (current_line.isEmpty());
@@ -58,11 +66,11 @@ public class Parser {
                 case "if-goto" -> CommandType.C_IF;
                 case "return" -> CommandType.C_RETURN;
                 case "add", "sub", "neg", "eq", "gt", "lt", "and", "or", "not" -> CommandType.C_ARITHMETIC;
-                default -> throw new InvalidCommandException(parts[0]);
+                default -> throw new InvalidCommandException(parts[0],getLineNumber(),getCurrent_line());
             };
         }
         else
-            throw new NuLLCommandFoundException();
+            throw new NuLLCommandFoundException(getLineNumber(),getCurrent_line());
     }
 
 
@@ -75,10 +83,12 @@ public class Parser {
                 commandType() == CommandType.C_CALL ||
                 commandType() == CommandType.C_FUNCTION) {
             String[] parts = current_line.split(" ");
+            if(parts.length<2)
+                throw new MissingFirstArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
             return parts[1];
         }
         else
-            throw new MissingFirstArgumentException(commandType().name());
+            throw new MissingFirstArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
     }
 
 
@@ -88,13 +98,28 @@ public class Parser {
                 commandType() == CommandType.C_CALL ||
                 commandType() == CommandType.C_FUNCTION) {
             String[] parts = current_line.split(" ");
+            if(parts.length<3)
+                throw new MissingSecondArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
             return Integer.parseInt(parts[2]);
         }
-        throw new MissingSecondArgumentException(commandType().name());
+        else
+            throw new MissingSecondArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
     }
 
 
     public void close() throws IOException {
         reader.close();
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
+    }
+
+    public String getCurrent_line() {
+        return current_line;
+    }
+
+    public Context getContext() {
+        return context;
     }
 }

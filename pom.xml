@@ -17,7 +17,6 @@
     <build>
         <pluginManagement>
             <plugins>
-                <!-- Common plugins for both modules -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-compiler-plugin</artifactId>
