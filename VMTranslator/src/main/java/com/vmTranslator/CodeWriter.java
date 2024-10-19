@@ -16,31 +16,20 @@ import com.vmTranslator.utils.Utils;
 import com.vmTranslator.VMExceptions.SyntaxExceptions;
 import com.vmTranslator.VMExceptions.SyntaxExceptions.*;
 
-import javax.swing.*;
-
 public class CodeWriter {
-    private String fileName;
+    private String inputFileName;
     private int labelID = 0;
-    private int retIndex = 0;
     private String functionName;
-    private final Path outputFilePath;
     private final BufferedWriter writer;
-    public static boolean isTesting = false;
 
-    CodeWriter(String fileName) throws IOException {
-        if(!isTesting)
-            outputFilePath = Paths.get("").resolve("result.asm");
-        else
-            outputFilePath = Paths.get("src/main/resources/VMFiles").resolve(fileName);
-
+    CodeWriter(String outputFileName) throws IOException {
+        Path outputFilePath = Paths.get("").resolve(outputFileName);
         writer = new BufferedWriter(new FileWriter(outputFilePath.toFile()));
+        System.out.println("Output File Will be generated at location : \n"+ outputFilePath.toAbsolutePath());
     }
 
-    public void setFileName(String fileName){
-        System.out.println(fileName);
-        System.out.println(functionName);
-        this.fileName = fileName;
-
+    public void setInputFileName(String inputFileName){
+        this.inputFileName = inputFileName;
     }
 
     public void writeArithmetic(String command, Context context) throws IOException, SyntaxExceptions {
@@ -56,16 +45,12 @@ public class CodeWriter {
         }
     }
 
-
     public void writeInit(int retIndex) throws IOException {
-
         String program = "@256\n" +
                 "D=A\n" +
                 "@SP\n" +
                 "M=D\n"+
                 FunctionWriter.writeCallCode("BootStrap", "Sys.init", 0,retIndex);
-//                "@Sys.init\n"+
-//                "0;JMP\n";
 
         writer.write(program);
         writer.flush();
@@ -75,23 +60,20 @@ public class CodeWriter {
         if (Utils.segmentList.contains(segment)) {
             String program;
             if (commandType == CommandType.C_PUSH)
-                program = PushPopWriter.pushProgram(segment, index, fileName,context);
+                program = PushPopWriter.pushProgram(segment, index, inputFileName,context);
             else if (commandType == CommandType.C_POP)
-                program = PushPopWriter.popProgram(segment, index, fileName,context);
+                program = PushPopWriter.popProgram(segment, index, inputFileName,context);
             else
                 throw new InvalidCommandException(commandType.name(), context.getLineNumber(), context.getCurrentLine());
 
             writer.write(program);
             writer.flush();
         }
-        else
-            throw new InvalidSegmentException(segment, context.getLineNumber(), context.getCurrentLine());
+        else throw new InvalidSegmentException(segment, context.getLineNumber(), context.getCurrentLine());
     }
 
     public void writeLabel(String label) throws IOException{
-        System.out.println(fileName);
-        System.out.println(functionName);
-        writer.write(BranchingWriter.writeLabelCode(label,functionName,fileName));
+        writer.write(BranchingWriter.writeLabelCode(label,functionName, inputFileName));
         writer.flush();
     }
 
@@ -106,7 +88,7 @@ public class CodeWriter {
     }
 
     public void writeFunction(String functionName, int nVars) throws IOException, SyntaxExceptions{
-        writer.write(FunctionWriter.writeFunctionCode(functionName,nVars,fileName));
+        writer.write(FunctionWriter.writeFunctionCode(functionName,nVars, inputFileName));
         writer.flush();
         this.functionName = functionName;
     }
@@ -121,9 +103,7 @@ public class CodeWriter {
         writer.flush();
     }
 
-    public void close(boolean isError) throws IOException {
-        if(!isError)
-            System.out.println("Output file : "+outputFilePath.toAbsolutePath());
+    public void close() throws IOException {
         if (writer != null) {
             writer.flush();
             writer.close();

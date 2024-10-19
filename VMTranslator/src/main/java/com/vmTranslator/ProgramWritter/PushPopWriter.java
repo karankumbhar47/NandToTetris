@@ -5,7 +5,7 @@ import com.vmTranslator.utils.Utils;
 import com.vmTranslator.VMExceptions.SyntaxExceptions;
 
 public class PushPopWriter {
-    private static final int maxMemoryCount = 24576;
+    private static final int maxMemoryCount = 32767;
 
     public static String pushProgram(String segment, int index,String fileName, Context context) throws SyntaxExceptions {
         Utils.validateIndex(index, maxMemoryCount, context);

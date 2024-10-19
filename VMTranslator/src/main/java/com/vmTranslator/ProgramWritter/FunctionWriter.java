@@ -121,5 +121,4 @@ public class FunctionWriter {
                 "@" + segment + "\n" +
                 "M=D\n";
     }
-
 }

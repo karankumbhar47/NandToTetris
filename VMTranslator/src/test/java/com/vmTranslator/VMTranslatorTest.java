@@ -1,7 +1,5 @@
 package com.vmTranslator;
 
-import com.vmTranslator.ProgramWritter.FunctionWriter;
-import com.vmTranslator.VMExceptions.SyntaxExceptions;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.params.ParameterizedTest;
@@ -19,40 +17,41 @@ import static org.junit.jupiter.api.Assertions.*;
 
 class VMTranslatorTest {
     private static final Path VM_FILES_DIR = Paths.get("src/main/resources/VMFiles");
-    private static final Path FUN_FILES_DIR = Paths.get("src/main/resources/FunctionFiles");
+    private static final Path FUNC_FILES_DIR = Paths.get("src/main/resources/FunctionFiles");
+    private static final Path BRANCH_FILES_DIR = Paths.get("src/main/resources/BranchingFiles");
     private static final Path CURR_DIR = Paths.get("");
 
     private Path outputAsmFilePath;
+    private Path actualOutputFilePath;
 
     @BeforeEach
     void setup() {
-        CodeWriter.isTesting = true;
     }
 
     @AfterEach
     void tearDown() throws IOException {
         Files.deleteIfExists(outputAsmFilePath);
-        CodeWriter.isTesting = false;
+        Files.deleteIfExists(actualOutputFilePath);
     }
 
     @ParameterizedTest
     @ValueSource(strings = {
-//            "BasicTest.vm",
-//            "BasicLoop.vm",
-//            "FibonacciSeries.vm",
-//            "NestedCall.vm",
-//            "SimpleFunction.vm",
-//            "PointerTest.vm",
-//            "SimpleAdd.vm",
-//            "StaticTest.vm",
+            "BasicTest.vm",
+            "PointerTest.vm",
+            "SimpleAdd.vm",
+            "StackTest.vm",
+            "StaticTest.vm",
     })
-    void testHackAssembler(String fileName) throws IOException, InterruptedException, SyntaxExceptions {
+    void testHackAssembler(String fileName) throws IOException, InterruptedException {
         Path inputFilePath = VM_FILES_DIR.resolve(fileName);
 
         VMTranslator.main(new String[]{inputFilePath.toString()});
 
-        outputAsmFilePath = VM_FILES_DIR.resolve(fileName.replace(".vm", ".asm"));
+        actualOutputFilePath = CURR_DIR.resolve(fileName.replace(".vm", ".asm"));
         Path outputTstFilePath = VM_FILES_DIR.resolve(fileName.replace(".vm", ".tst"));
+        outputAsmFilePath = VM_FILES_DIR.resolve(fileName.replace(".vm", ".asm"));
+
+        Files.copy(actualOutputFilePath,outputAsmFilePath,StandardCopyOption.REPLACE_EXISTING);
 
         if(Files.exists(outputAsmFilePath)){
             runAndCheck(outputTstFilePath.toString());
@@ -62,16 +61,43 @@ class VMTranslatorTest {
 
     @ParameterizedTest
     @ValueSource(strings = {
-            "FibonacciElement/",
-            "StaticTest/"
+            "SimpleFunction",
+            "NestedCall",
+            "FibonacciElement",
+            "StaticsTest"
     })
-    void testFunction(String folderName) throws IOException, InterruptedException, SyntaxExceptions {
-        Path sourceFolder = FUN_FILES_DIR.resolve(folderName);
+    void testFunction(String folderName) throws IOException, InterruptedException{
+        Path sourceFolder = FUNC_FILES_DIR.resolve(folderName);
 
         VMTranslator.main(new String[]{sourceFolder.toString()});
 
-        outputAsmFilePath = FUN_FILES_DIR.resolve(folderName+".asm");
-        Path outputTstFilePath = FUN_FILES_DIR.resolve(folderName+".tst");
+        actualOutputFilePath = CURR_DIR.resolve(folderName+".asm");
+        outputAsmFilePath = sourceFolder.resolve(folderName+".asm");
+        Path outputTstFilePath = sourceFolder.resolve(folderName+".tst");
+        Files.copy(actualOutputFilePath,outputAsmFilePath,StandardCopyOption.REPLACE_EXISTING);
+
+        if(Files.exists(outputAsmFilePath)){
+            runAndCheck(outputTstFilePath.toString());
+        }
+    }
+
+
+    @ParameterizedTest
+    @ValueSource(strings = {
+            "BasicLoop.vm",
+            "FibonacciSeries.vm",
+    })
+    void testBranching(String fileName) throws IOException, InterruptedException{
+        Path inputFileDir = BRANCH_FILES_DIR.resolve(fileName.replace(".vm",""));
+        Path intputFilePath = inputFileDir.resolve(fileName);
+
+        VMTranslator.main(new String[]{intputFilePath.toString()});
+
+        actualOutputFilePath = CURR_DIR.resolve(fileName.replace(".vm",".asm"));
+        outputAsmFilePath = inputFileDir.resolve(fileName.replace(".vm",".asm"));
+        Path outputTstFilePath = inputFileDir.resolve(fileName.replace(".vm",".tst"));
+
+        Files.copy(actualOutputFilePath,outputAsmFilePath,StandardCopyOption.REPLACE_EXISTING);
 
         if(Files.exists(outputAsmFilePath)){
             runAndCheck(outputTstFilePath.toString());

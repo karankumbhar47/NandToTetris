@@ -66,6 +66,12 @@ public class SyntaxExceptions extends Exception {
         }
     }
 
+    public static class InvalidIntegerException extends SyntaxExceptions {
+        public InvalidIntegerException(String command,int lineNumber,String currentLine) {
+            super("Invalid Integer Value for the command: " + command,lineNumber,currentLine);
+        }
+    }
+
     public static class InvalidArithmeticCommandException extends SyntaxExceptions {
         public InvalidArithmeticCommandException(String command,int lineNumber,String currentLine) {
             super("Invalid arithmetic command: " + command,lineNumber,currentLine);

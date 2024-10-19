@@ -1,6 +1,7 @@
 package com.vmTranslator.utils;
 
 import java.util.ArrayList;
+import org.apache.commons.lang3.math.NumberUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -79,5 +80,9 @@ public class Utils {
             }
         }
         return closestCommand;
+    }
+
+    public static boolean isValidInteger(String str) {
+        return NumberUtils.isParsable(str);
     }
 }

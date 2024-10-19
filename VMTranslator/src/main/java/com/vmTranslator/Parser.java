@@ -109,6 +109,8 @@ public class Parser {
         String[] parts = current_line.split(" ");
         if(parts.length<3)
             throw new MissingSecondArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
+        if(!Utils.isValidInteger(parts[2]))
+            throw new InvalidIntegerException(commandType().name(), getLineNumber(),getCurrent_line());
         return Integer.parseInt(parts[2]);
     }
 
