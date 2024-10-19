@@ -1,5 +1,6 @@
 package com.vmTranslator;
 
+import com.vmTranslator.utils.Utils;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 
@@ -38,8 +39,6 @@ class UtilsTest {
         testCases.put("  push constant 17    ", "push constant 17");
         testCases.put("push constant 17\n", "push constant 17");
         testCases.put("push constant 17\r\n", "push constant 17");
-        testCases.put("push constant 17\n", "push constant 17");
-        testCases.put("push constant 17\r\n", "push constant 17");
         testCases.put("push constant 17 // comment\n", "push constant 17");
         testCases.put("push constant 17 // comment\r\n", "push constant 17");
         testCases.put("push constant 17 // comment \r\n", "push constant 17");
@@ -56,6 +55,6 @@ class UtilsTest {
     void testCleanLine(Map.Entry<String, String> testCase) {
         String input = testCase.getKey();
         String expected = testCase.getValue();
-        assertEquals(expected,Utils.cleanLine(input), "Failed for input: " + input);
+        assertEquals(expected, Utils.cleanLine(input), "Failed for input: " + input);
     }
 }

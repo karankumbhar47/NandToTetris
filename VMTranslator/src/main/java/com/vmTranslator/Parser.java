@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 
+import com.vmTranslator.utils.Context;
+import com.vmTranslator.utils.Utils;
 import com.vmTranslator.VMExceptions.SyntaxExceptions;
 import com.vmTranslator.VMExceptions.SyntaxExceptions.*;
 
@@ -14,7 +16,6 @@ public class Parser {
         C_ARITHMETIC, C_PUSH, C_POP,
         C_LABEL, C_GOTO, C_IF, C_FUNCTION,
         C_RETURN, C_CALL, C_NULL,
-        C_IF_GOTO
     }
 
 
@@ -75,35 +76,40 @@ public class Parser {
 
 
     public String arg1() throws SyntaxExceptions {
+        if (commandType() == CommandType.C_NULL)
+            throw new NuLLCommandFoundException(getLineNumber(), getCurrent_line());
+
+        if (commandType() == CommandType.C_RETURN)
+            throw new MissingFirstArgumentException(commandType().name(), getLineNumber(), getCurrent_line());
+
+        String[] parts = current_line.split(" ");
         if (commandType() == CommandType.C_ARITHMETIC) {
-            String[] parts = current_line.split(" ");
+            if(parts.length<1)
+                throw new MissingFirstArgumentException(commandType().name(), getLineNumber(), getCurrent_line());
             return parts[0];
-        } else if (commandType() == CommandType.C_PUSH ||
-                commandType() == CommandType.C_POP ||
-                commandType() == CommandType.C_CALL ||
-                commandType() == CommandType.C_FUNCTION) {
-            String[] parts = current_line.split(" ");
-            if(parts.length<2)
-                throw new MissingFirstArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
-            return parts[1];
         }
-        else
-            throw new MissingFirstArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
+
+        if (parts.length < 2)
+            throw new MissingFirstArgumentException(commandType().name(), getLineNumber(), getCurrent_line());
+        return parts[1];
     }
 
 
     public Integer arg2() throws SyntaxExceptions{
-        if (commandType() == CommandType.C_PUSH ||
-                commandType() == CommandType.C_POP ||
-                commandType() == CommandType.C_CALL ||
-                commandType() == CommandType.C_FUNCTION) {
-            String[] parts = current_line.split(" ");
-            if(parts.length<3)
-                throw new MissingSecondArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
-            return Integer.parseInt(parts[2]);
-        }
-        else
+        if (commandType()==CommandType.C_NULL)
+            throw new NuLLCommandFoundException(getLineNumber(), getCurrent_line());
+
+        if (commandType() == CommandType.C_GOTO ||
+                commandType() == CommandType.C_ARITHMETIC ||
+                commandType() == CommandType.C_LABEL ||
+                commandType() == CommandType.C_RETURN ||
+                commandType() == CommandType.C_IF)
+            throw new InvalidCommandException(commandType().name(),getLineNumber(),getCurrent_line());
+
+        String[] parts = current_line.split(" ");
+        if(parts.length<3)
             throw new MissingSecondArgumentException(commandType().name(),getLineNumber(),getCurrent_line());
+        return Integer.parseInt(parts[2]);
     }
 
 

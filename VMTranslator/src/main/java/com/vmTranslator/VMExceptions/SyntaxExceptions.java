@@ -1,14 +1,12 @@
 package com.vmTranslator.VMExceptions;
 
-import com.vmTranslator.SuggestionUtils;
+import com.vmTranslator.utils.Utils;
 
 public class SyntaxExceptions extends Exception {
     private static String formatMessage(String message, int lineNumber, String currentLine) {
-        StringBuilder sb = new StringBuilder();
-        sb.append("Error: ").append(message).append("\n");
-        sb.append("Exception occurred at line number: ").append(lineNumber).append("\n");
-        sb.append("Line content: ").append(currentLine != null ? "\"" + currentLine + "\"" : "N/A").append("\n");
-        return sb.toString();
+        return "Error: " + message + "\n" +
+                "Exception occurred at line number: " + lineNumber + "\n" +
+                "Line content: " + (currentLine != null ? "\"" + currentLine + "\"" : "N/A") + "\n";
     }
     public SyntaxExceptions(String message,int lineNumber,String currentLine) {
         super(formatMessage(message,lineNumber,currentLine));
@@ -17,7 +15,7 @@ public class SyntaxExceptions extends Exception {
     public static class InvalidCommandException extends SyntaxExceptions {
         public InvalidCommandException(String command,int lineNumber,String currentLine) {
             super("Invalid command: " + command+
-                    "\n Do you mean \""+ SuggestionUtils.findClosestCommand(command,SuggestionUtils.commandList)
+                    "\n Do you mean \""+ Utils.findClosestCommand(command,Utils.commandList)
                     +"\" instead of \""+command+"\"",lineNumber,currentLine);
         }
     }
@@ -26,21 +24,15 @@ public class SyntaxExceptions extends Exception {
     public static class InvalidSegmentException extends SyntaxExceptions {
         public InvalidSegmentException(String segment,int lineNumber,String currentLine) {
             super("Invalid memory segment: " + segment+
-            "\n Do you mean \""+ SuggestionUtils.findClosestCommand(segment,SuggestionUtils.segmentList)
+            "\n Do you mean \""+ Utils.findClosestCommand(segment,Utils.segmentList)
                     +"\" instead of \""+segment+"\"",lineNumber,currentLine);
         }
     }
 
 
-    public static class InvalidPushPopAddSegmentException extends SyntaxExceptions {
-        public InvalidPushPopAddSegmentException(String segment,int lineNumber,String currentLine) {
+    public static class UnExceptedSegmentException extends SyntaxExceptions {
+        public UnExceptedSegmentException(String segment, int lineNumber, String currentLine) {
             super("Searching for Segment among {local, argument, this, that} But found "+segment,lineNumber,currentLine);
-        }
-    }
-
-    public static class InvalidPushPopSegmentException extends SyntaxExceptions {
-        public InvalidPushPopSegmentException(String segment,int lineNumber,String currentLine) {
-            super("Searching for Segment among {temp, static, pointer} But found "+segment,lineNumber,currentLine);
         }
     }
 
@@ -98,6 +90,14 @@ public class SyntaxExceptions extends Exception {
         }
     }
 
+    public static class NuLLCommandFoundException extends SyntaxExceptions {
+        public NuLLCommandFoundException(int lineNumber,String currentLine) {
+            super("No command found on current line.",lineNumber,currentLine);
+        }
+    }
+
+}
+
 //    public static class InvalidFunctionCallException extends SyntaxExceptions {
 //        public InvalidFunctionCallException(String command) {
 //            super("Invalid function call format: " + command);
@@ -127,13 +127,4 @@ public class SyntaxExceptions extends Exception {
 //            super("Invalid 'goto' command format: " + command);
 //        }
 //    }
-
-    public static class NuLLCommandFoundException extends SyntaxExceptions {
-        public NuLLCommandFoundException(int lineNumber,String currentLine) {
-            super("No command found on current line.",lineNumber,currentLine);
-        }
-    }
-
-}
-
 
