@@ -91,6 +91,7 @@ class VMTranslatorTest {
         Path inputFileDir = BRANCH_FILES_DIR.resolve(fileName.replace(".vm",""));
         Path intputFilePath = inputFileDir.resolve(fileName);
 
+
         VMTranslator.main(new String[]{intputFilePath.toString()});
 
         actualOutputFilePath = CURR_DIR.resolve(fileName.replace(".vm",".asm"));
