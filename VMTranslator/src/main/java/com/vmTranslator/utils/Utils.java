@@ -1,7 +1,6 @@
 package com.vmTranslator.utils;
 
 import java.util.ArrayList;
-import org.apache.commons.lang3.math.NumberUtils;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -83,6 +82,14 @@ public class Utils {
     }
 
     public static boolean isValidInteger(String str) {
-        return NumberUtils.isParsable(str);
+//        return NumberUtils.isParsable(str);
+        if (str == null || str.isEmpty()) return false;
+        try {
+            Integer.parseInt(str);
+            return true;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
+
 }

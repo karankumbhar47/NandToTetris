@@ -47,7 +47,7 @@ class Game {
 
     method void startGame() {
         var int key;
-        var int lastKey; // Track the last key pressed
+        var int lastKey; 
 
         let lastKey = -1;
         while (true) {
@@ -157,7 +157,6 @@ class Game {
                 do board.setPlayerScore(player1,player2);
                 do board.setHightestBatch(player1,player2);
                 do utils.delay(10);
-                // do initGame();
                 return;
             }
             if(currPlayer.getId()=1){

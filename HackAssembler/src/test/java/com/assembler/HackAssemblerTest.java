@@ -29,7 +29,7 @@ public class HackAssemblerTest {
     @AfterEach
     void tearDown() throws IOException{
         Path outputFilePath = OUTPUT_DIR.resolve(outputFileName).toAbsolutePath();
-        Files.deleteIfExists(outputFilePath);
+//        Files.deleteIfExists(outputFilePath);
     }
 
     @ParameterizedTest
@@ -49,7 +49,8 @@ public class HackAssemblerTest {
             "q7_mult.asm",
             "q8_fill.asm",
             "Rect.asm",
-            "RectL.asm",
+            "RectL.asm"
+//            "TicTacToe.asm"
     })
     void testHackAssembler(String fileName) throws IOException {
         outputFileName = fileName.replace(".asm", ".hack");
