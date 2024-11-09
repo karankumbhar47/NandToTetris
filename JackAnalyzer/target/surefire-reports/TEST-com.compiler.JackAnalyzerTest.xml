@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.compiler.JackAnalyzerTest" time="0.445" tests="17" errors="0" skipped="0" failures="0">
+<testsuite xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="https://maven.apache.org/surefire/maven-surefire-plugin/xsd/surefire-test-report-3.0.xsd" version="3.0" name="com.compiler.JackAnalyzerTest" time="0.421" tests="17" errors="0" skipped="0" failures="0">
   <properties>
     <property name="java.specification.version" value="21"/>
     <property name="sun.jnu.encoding" value="UTF-8"/>
@@ -12,7 +12,7 @@
     <property name="sun.java.launcher" value="SUN_STANDARD"/>
     <property name="user.country" value="IN"/>
     <property name="sun.boot.library.path" value="/usr/lib/jvm/java-21-openjdk-amd64/lib"/>
-    <property name="sun.java.command" value="/home/karan/Project/working/NandToTetris/JackAnalyzer/target/surefire/surefirebooter-20241109233436159_3.jar /home/karan/Project/working/NandToTetris/JackAnalyzer/target/surefire 2024-11-09T23-34-36_088-jvmRun1 surefire-20241109233436159_1tmp surefire_0-20241109233436159_2tmp"/>
+    <property name="sun.java.command" value="/home/karan/Project/working/NandToTetris/JackAnalyzer/target/surefire/surefirebooter-20241109233638238_3.jar /home/karan/Project/working/NandToTetris/JackAnalyzer/target/surefire 2024-11-09T23-36-38_175-jvmRun1 surefire-20241109233638238_1tmp surefire_0-20241109233638238_2tmp"/>
     <property name="jdk.debug" value="release"/>
     <property name="surefire.test.class.path" value="/home/karan/Project/working/NandToTetris/JackAnalyzer/target/test-classes:/home/karan/Project/working/NandToTetris/JackAnalyzer/target/classes:/home/karan/.m2/repository/org/junit/jupiter/junit-jupiter-api/5.11.0/junit-jupiter-api-5.11.0.jar:/home/karan/.m2/repository/org/opentest4j/opentest4j/1.3.0/opentest4j-1.3.0.jar:/home/karan/.m2/repository/org/junit/platform/junit-platform-commons/1.11.0/junit-platform-commons-1.11.0.jar:/home/karan/.m2/repository/org/apiguardian/apiguardian-api/1.1.2/apiguardian-api-1.1.2.jar:/home/karan/.m2/repository/org/junit/jupiter/junit-jupiter-engine/5.11.0/junit-jupiter-engine-5.11.0.jar:/home/karan/.m2/repository/org/junit/platform/junit-platform-engine/1.11.0/junit-platform-engine-1.11.0.jar:/home/karan/.m2/repository/org/junit/jupiter/junit-jupiter-params/5.11.0/junit-jupiter-params-5.11.0.jar:/home/karan/.m2/repository/org/apache/commons/commons-lang3/3.14.0/commons-lang3-3.14.0.jar:"/>
     <property name="sun.cpu.endian" value="little"/>
@@ -27,7 +27,7 @@
     <property name="line.separator" value="&#10;"/>
     <property name="java.specification.name" value="Java Platform API Specification"/>
     <property name="java.vm.specification.vendor" value="Oracle Corporation"/>
-    <property name="surefire.real.class.path" value="/home/karan/Project/working/NandToTetris/JackAnalyzer/target/surefire/surefirebooter-20241109233436159_3.jar"/>
+    <property name="surefire.real.class.path" value="/home/karan/Project/working/NandToTetris/JackAnalyzer/target/surefire/surefirebooter-20241109233638238_3.jar"/>
     <property name="sun.management.compiler" value="HotSpot 64-Bit Tiered Compilers"/>
     <property name="java.runtime.version" value="21.0.4+7-Ubuntu-1ubuntu222.04"/>
     <property name="user.name" value="karan"/>
@@ -53,14 +53,14 @@
     <property name="sun.io.unicode.encoding" value="UnicodeLittle"/>
     <property name="java.class.version" value="65.0"/>
   </properties>
-  <testcase name="testJackAnalyzerWithDirectories(String)[1]" classname="com.compiler.JackAnalyzerTest" time="0.077">
+  <testcase name="testJackAnalyzerWithDirectories(String)[1]" classname="com.compiler.JackAnalyzerTest" time="0.07">
     <system-out><![CDATA[Testing directory: ArrayTest
 Processed Tokens src/main/resources/ArrayTest/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/ArrayTest_Out/MainT.xml
 Processed src/main/resources/ArrayTest/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/ArrayTest_Out/Main.xml
 /home/karan/Project/working/NandToTetris/JackAnalyzer/out/ArrayTest_Out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithDirectories(String)[2]" classname="com.compiler.JackAnalyzerTest" time="0.069">
+  <testcase name="testJackAnalyzerWithDirectories(String)[2]" classname="com.compiler.JackAnalyzerTest" time="0.066">
     <system-out><![CDATA[Testing directory: ExpressionLessSquare
 Processed Tokens src/main/resources/ExpressionLessSquare/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/ExpressionLessSquare_Out/MainT.xml
 Processed src/main/resources/ExpressionLessSquare/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/ExpressionLessSquare_Out/Main.xml
@@ -73,7 +73,7 @@ Processed src/main/resources/ExpressionLessSquare/SquareGame.jack -> /home/karan
 /home/karan/Project/working/NandToTetris/JackAnalyzer/out/ExpressionLessSquare_Out/SquareGame.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithDirectories(String)[3]" classname="com.compiler.JackAnalyzerTest" time="0.048">
+  <testcase name="testJackAnalyzerWithDirectories(String)[3]" classname="com.compiler.JackAnalyzerTest" time="0.051">
     <system-out><![CDATA[Testing directory: Square
 Processed Tokens src/main/resources/Square/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square_Out/MainT.xml
 Processed src/main/resources/Square/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square_Out/Main.xml
@@ -86,17 +86,17 @@ Processed src/main/resources/Square/SquareGame.jack -> /home/karan/Project/worki
 /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square_Out/SquareGame.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerTokensWithFiles(String)[1]" classname="com.compiler.JackAnalyzerTest" time="0.009">
+  <testcase name="testJackAnalyzerTokensWithFiles(String)[1]" classname="com.compiler.JackAnalyzerTest" time="0.007">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ArrayTest/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/MainT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ArrayTest/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerTokensWithFiles(String)[2]" classname="com.compiler.JackAnalyzerTest" time="0.004">
+  <testcase name="testJackAnalyzerTokensWithFiles(String)[2]" classname="com.compiler.JackAnalyzerTest" time="0.006">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/MainT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerTokensWithFiles(String)[3]" classname="com.compiler.JackAnalyzerTest" time="0.012">
+  <testcase name="testJackAnalyzerTokensWithFiles(String)[3]" classname="com.compiler.JackAnalyzerTest" time="0.013">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square.xml
 ]]></system-out>
@@ -106,32 +106,32 @@ Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resourc
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/SquareGame.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareGame.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerTokensWithFiles(String)[5]" classname="com.compiler.JackAnalyzerTest" time="0.01">
+  <testcase name="testJackAnalyzerTokensWithFiles(String)[5]" classname="com.compiler.JackAnalyzerTest" time="0.007">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/MainT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerTokensWithFiles(String)[6]" classname="com.compiler.JackAnalyzerTest" time="0.041">
+  <testcase name="testJackAnalyzerTokensWithFiles(String)[6]" classname="com.compiler.JackAnalyzerTest" time="0.029">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerTokensWithFiles(String)[7]" classname="com.compiler.JackAnalyzerTest" time="0.012">
+  <testcase name="testJackAnalyzerTokensWithFiles(String)[7]" classname="com.compiler.JackAnalyzerTest" time="0.02">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/SquareGame.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareGameT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/SquareGame.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareGame.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithFiles(String)[1]" classname="com.compiler.JackAnalyzerTest" time="0.011">
+  <testcase name="testJackAnalyzerWithFiles(String)[1]" classname="com.compiler.JackAnalyzerTest" time="0.01">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ArrayTest/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/MainT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ArrayTest/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithFiles(String)[2]" classname="com.compiler.JackAnalyzerTest" time="0.003">
+  <testcase name="testJackAnalyzerWithFiles(String)[2]" classname="com.compiler.JackAnalyzerTest" time="0.004">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/MainT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithFiles(String)[3]" classname="com.compiler.JackAnalyzerTest" time="0.025">
+  <testcase name="testJackAnalyzerWithFiles(String)[3]" classname="com.compiler.JackAnalyzerTest" time="0.017">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square.xml
 ]]></system-out>
@@ -141,17 +141,17 @@ Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resourc
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/ExpressionLessSquare/SquareGame.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareGame.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithFiles(String)[5]" classname="com.compiler.JackAnalyzerTest" time="0.007">
+  <testcase name="testJackAnalyzerWithFiles(String)[5]" classname="com.compiler.JackAnalyzerTest" time="0.008">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/MainT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Main.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Main.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithFiles(String)[6]" classname="com.compiler.JackAnalyzerTest" time="0.027">
+  <testcase name="testJackAnalyzerWithFiles(String)[6]" classname="com.compiler.JackAnalyzerTest" time="0.029">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/Square.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/Square.xml
 ]]></system-out>
   </testcase>
-  <testcase name="testJackAnalyzerWithFiles(String)[7]" classname="com.compiler.JackAnalyzerTest" time="0.007">
+  <testcase name="testJackAnalyzerWithFiles(String)[7]" classname="com.compiler.JackAnalyzerTest" time="0.009">
     <system-out><![CDATA[Processed Tokens /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/SquareGame.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareGameT.xml
 Processed /home/karan/Project/working/NandToTetris/JackAnalyzer/src/main/resources/Square/SquareGame.jack -> /home/karan/Project/working/NandToTetris/JackAnalyzer/out/SquareGame.xml
 ]]></system-out>
