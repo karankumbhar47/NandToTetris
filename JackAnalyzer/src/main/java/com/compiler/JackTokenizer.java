@@ -4,9 +4,7 @@ import com.compiler.Utils.EnumClass.TokenType;
 import com.compiler.Utils.EnumClass.KeywordType;
 import com.compiler.Utils.RegXUtils;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +39,6 @@ public class JackTokenizer {
         while (matcher.find()) {
             tokens.add(matcher.group());
         }
-
     }
 
     public boolean hasMoreTokens() {
@@ -103,4 +100,7 @@ public class JackTokenizer {
     public String getCurrentToken(){
         return currentToken;
     }
+
+
+
 }

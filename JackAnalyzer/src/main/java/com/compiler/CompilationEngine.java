@@ -283,7 +283,7 @@ public class CompilationEngine{
 
             // Next variable name
             tokenizer.advance();
-            printIndented("<identifier> " + tokenizer.getCurrentToken() + " </identifier>");
+            printIndented("<identifier> " + tokenizer.identifier() + " </identifier>");
         }
 
         //;
@@ -468,7 +468,6 @@ public class CompilationEngine{
         indentationLevel--;
         printIndented("</returnStatement>");
     }
-
 
     public void compileExpression() throws IOException{
         printIndented("<expression>");
