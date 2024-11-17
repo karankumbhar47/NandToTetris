@@ -1,6 +1,6 @@
 package com.compiler;
 
-import com.compiler.CustomExceptions.SyntaxExceptions;
+import com.compiler.Utils.SyntaxExceptions;
 import com.compiler.Utils.TokenizerUtils;
 
 import java.io.IOException;
@@ -13,7 +13,7 @@ import java.util.stream.Collectors;
 public class JackAnalyzer {
     public static void main(String[] args) throws IOException, SyntaxExceptions {
         if (args.length < 1 || args.length > 2) {
-            System.out.println("Usage: JackAnalyzer <input> [output]");
+            System.out.println("Usage: JackCompiler <input> [output]");
             return;
         }
 

@@ -1,11 +1,10 @@
 package com.compiler;
 
 import com.compiler.CompilationClasses.*;
-import com.compiler.CustomExceptions.SyntaxExceptions;
-import com.compiler.CustomExceptions.SyntaxExceptions.*;
 import com.compiler.Utils.EnumClass;
 import com.compiler.Utils.EnumClass.KeywordType;
 import com.compiler.Utils.EnumClass.TokenType;
+import com.compiler.Utils.SyntaxExceptions;
 import com.compiler.Utils.VMUtils;
 
 import java.io.IOException;
@@ -89,19 +88,19 @@ public class CompilationEngine {
 
     public void ensureSymbol(char expectedSymbol,String errorMessage) throws SyntaxExceptions {
         if (!(tokenizer.tokenType() == TokenType.SYMBOL && tokenizer.symbol() == expectedSymbol)) {
-            VMUtils.throwError(errorMessage);
+            throw new SyntaxExceptions(errorMessage,tokenizer.getContext());
         }
     }
 
     public void ensureKeyword(KeywordType expectedKeyword, String errorMessage) throws SyntaxExceptions {
         if (!(tokenizer.tokenType() == TokenType.KEYWORD && tokenizer.keyWord() == expectedKeyword)) {
-            VMUtils.throwError(errorMessage);
+            throw new SyntaxExceptions(errorMessage,tokenizer.getContext());
         }
     }
 
     public void ensureIdentifier(String errorMessage) throws SyntaxExceptions {
         if (tokenizer.tokenType() != TokenType.IDENTIFIER) {
-            VMUtils.throwError(errorMessage);
+            throw new SyntaxExceptions(errorMessage,tokenizer.getContext());
         }
     }
 
@@ -111,7 +110,7 @@ public class CompilationEngine {
                         tokenizer.keyWord() == KeywordType.CHAR ||
                         tokenizer.keyWord() == KeywordType.BOOLEAN)) &&
                 tokenizer.tokenType() != TokenType.IDENTIFIER) {
-            VMUtils.throwError(errorMessage);
+            throw new SyntaxExceptions(errorMessage,tokenizer.getContext());
         }
     }
 
@@ -119,7 +118,7 @@ public class CompilationEngine {
         if(!(tokenizer.tokenType() == EnumClass.TokenType.KEYWORD &&
                 (tokenizer.keyWord() == EnumClass.KeywordType.STATIC
                         || tokenizer.keyWord() == EnumClass.KeywordType.FIELD))) {
-            VMUtils.throwError(errorMessage);
+            throw new SyntaxExceptions(errorMessage,tokenizer.getContext());
         }
     }
 
@@ -128,7 +127,8 @@ public class CompilationEngine {
                 (tokenizer.keyWord().equals(EnumClass.KeywordType.CONSTRUCTOR) ||
                         tokenizer.keyWord().equals(EnumClass.KeywordType.FUNCTION) ||
                         tokenizer.keyWord().equals(EnumClass.KeywordType.METHOD)))) {
-           VMUtils.throwError("Expected 'constructor', 'function', or 'method' at start of subroutineDec.");
+            throw new SyntaxExceptions("Expected 'constructor', 'function', or 'method' at start of subroutineDec."
+                    ,tokenizer.getContext());
         }
     }
 }

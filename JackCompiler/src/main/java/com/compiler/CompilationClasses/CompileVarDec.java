@@ -1,7 +1,7 @@
 package com.compiler.CompilationClasses;
 
 import com.compiler.CompilationEngine;
-import com.compiler.CustomExceptions.SyntaxExceptions;
+import com.compiler.Utils.SyntaxExceptions;
 import com.compiler.JackTokenizer;
 import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
@@ -22,7 +22,7 @@ public class CompileVarDec {
 
         tokenizer.advance(); // type of variable
         if (!(tokenizer.tokenType() == EnumClass.TokenType.KEYWORD || tokenizer.tokenType() == EnumClass.TokenType.IDENTIFIER))
-            throw new SyntaxExceptions.InvalidFunctionVariableKeywordException();
+            throw new SyntaxExceptions.InvalidFunctionVariableKeywordException(tokenizer.getContext());
         String type = tokenizer.tokenType() == EnumClass.TokenType.KEYWORD ? tokenizer.keyWord().toString() : tokenizer.identifier();
 
         tokenizer.advance(); // name of variable

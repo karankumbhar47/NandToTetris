@@ -1,6 +1,6 @@
 package com.compiler;
 
-import com.compiler.CustomExceptions.SyntaxExceptions;
+import com.compiler.Utils.SyntaxExceptions;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.ValueSource;

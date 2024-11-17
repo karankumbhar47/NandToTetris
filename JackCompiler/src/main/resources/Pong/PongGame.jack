@@ -8,7 +8,7 @@
  */
 class PongGame {
 
-    static PongGame instance; // A Pong game     
+    static PongGame instance; // A Pong game
     field Bat bat;            // bat
     field Ball ball;          // ball
     field int wall;           // current wall that the ball is bouncing off of

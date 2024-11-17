@@ -1,7 +1,7 @@
 package com.compiler.CompilationClasses;
 
 import com.compiler.CompilationEngine;
-import com.compiler.CustomExceptions.SyntaxExceptions;
+import com.compiler.Utils.SyntaxExceptions;
 import com.compiler.JackTokenizer;
 import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
@@ -49,7 +49,7 @@ public class CompileDo {
             classNameMethod = className + "." + classNameMethod; // Add class context to the method name
             argCount++;
         } else
-            throw new SyntaxExceptions.InvalidOpeningBracketsException();
+            throw new SyntaxExceptions.InvalidOpeningBracketsException(tokenizer.getContext());
 
         tokenizer.advance();
         argCount += parent.compileExpressionList();

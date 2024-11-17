@@ -1,7 +1,7 @@
 package com.compiler.CompilationClasses;
 
 import com.compiler.CompilationEngine;
-import com.compiler.CustomExceptions.SyntaxExceptions;
+import com.compiler.Utils.SyntaxExceptions;
 import com.compiler.JackTokenizer;
 import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
@@ -69,8 +69,7 @@ public class CompileTerm {
             tokenizer.advance();
             parent.compileExpression();
 
-            if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ')'))
-                throw new SyntaxExceptions.InvalidClosingBracketsException();
+            parent.ensureSymbol(')',"Expected `)` at the end of expression");
             tokenizer.advance();
         }
         else if (tokenizer.tokenType() == EnumClass.TokenType.IDENTIFIER) {

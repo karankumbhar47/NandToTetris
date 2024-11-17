@@ -1,6 +1,6 @@
 package com.compiler;
 
-import com.compiler.CustomExceptions.SyntaxExceptions;
+import com.compiler.Utils.SyntaxExceptions;
 
 import java.io.IOException;
 import java.nio.file.*;
@@ -26,12 +26,12 @@ public class JackCompiler {
             processFile(inputPath, inputPath.getParent());
     }
 
-    private static void processFile(Path filePath, Path outputDir) {
+    private static void processFile(Path filePath, Path outputDir){
         try {
             String outputVMFileName = filePath.getFileName().toString().replace(".jack", ".vm");
             Path outputVMPath = outputDir.resolve(outputVMFileName);
 
-            System.out.println(filePath.toAbsolutePath());
+            System.out.println("Input File    : "+filePath.toAbsolutePath());
             JackTokenizer tokenizer = new JackTokenizer(filePath);
             CompilationEngine engine = new CompilationEngine(outputVMPath,tokenizer);
             if(tokenizer.hasMoreTokens()) {
@@ -39,10 +39,9 @@ public class JackCompiler {
                 engine.compileClass();
             }
             engine.closeFile();
-            System.out.println("Compiled: " + outputVMPath);
+            System.out.println("Compiled File : " + outputVMPath.toAbsolutePath());
         } catch (IOException|SyntaxExceptions exception) {
-            System.out.println("Error while compiling dut to : "+exception.getMessage());
-            exception.printStackTrace();
+            System.err.println(exception.getMessage());
         }
     }
 }

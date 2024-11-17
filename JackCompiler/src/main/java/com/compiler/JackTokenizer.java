@@ -1,5 +1,6 @@
 package com.compiler;
 
+import com.compiler.Utils.Context;
 import com.compiler.Utils.EnumClass.TokenType;
 import com.compiler.Utils.EnumClass.KeywordType;
 import com.compiler.Utils.TokenizerUtils;
@@ -13,13 +14,19 @@ import java.util.regex.Matcher;
 import static com.compiler.Utils.TokenizerUtils.keywordMap;
 
 public class JackTokenizer {
-    private final List<String> tokens;
-    public int currentTokenIndex;
+    private String fileName;
     private String currentToken;
+    public int currentTokenIndex;
+    private final List<String> tokens;
+    private final List<String> tokenLines;
+    private final List<Integer> tokenLineNumbers;
 
     public JackTokenizer(Path filePath) throws IOException {
+        this.tokenLineNumbers = new ArrayList<>();
+        this.tokenLines = new ArrayList<>();
         this.tokens = new ArrayList<>();
         this.currentTokenIndex = -1;
+        this.fileName = filePath.getFileName().toString();
         tokenize(filePath);
     }
 
@@ -34,12 +41,20 @@ public class JackTokenizer {
 
         String input = fileContent
                 .toString()
-                .replaceAll("//.*|/\\*\\*?[\\s\\S]*?\\*/", "");
-        Matcher matcher = TokenizerUtils.TOKEN_PATTERN.matcher(input);
-        while (matcher.find()) {
-            tokens.add(matcher.group());
+                .replaceAll("//.*|/\\*\\*?[\\s\\S]*?\\*/", "#");
+        BufferedReader cleanReader = new BufferedReader(new StringReader(input));
+
+        int lineNumber = 0;
+        while ((currentLine = cleanReader.readLine()) != null) {
+            lineNumber++;
+            Matcher lineMatcher = TokenizerUtils.TOKEN_PATTERN.matcher(currentLine);
+            while (lineMatcher.find()) {
+                tokens.add(lineMatcher.group());
+                tokenLineNumbers.add(lineNumber);
+                tokenLines.add(currentLine);
+            }
         }
-        System.out.println(tokens);
+        cleanReader.close();
     }
 
     public boolean hasMoreTokens() {
@@ -51,8 +66,6 @@ public class JackTokenizer {
             currentTokenIndex++;
             currentToken = tokens.get(currentTokenIndex);
         }
-        System.out.println(currentTokenIndex);
-        System.out.println(currentToken);
     }
 
     public TokenType tokenType() {
@@ -100,7 +113,9 @@ public class JackTokenizer {
         return null;
     }
 
-    public String getCurrentToken(){
-        return currentToken;
+    public Context getContext() {
+        int lineNumber = tokenLineNumbers.get(currentTokenIndex);
+        String currentLine = tokenLines.get(currentTokenIndex);
+        return new Context(lineNumber, currentLine, fileName,currentToken);
     }
 }
