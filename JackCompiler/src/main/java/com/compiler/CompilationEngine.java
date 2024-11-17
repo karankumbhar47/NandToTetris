@@ -63,7 +63,7 @@ public class CompilationEngine {
         tokenizer.advance();
     }
 
-    public void compileClassVarDec() throws IOException, SyntaxExceptions {
+    public void compileClassVarDec() throws SyntaxExceptions {
         indentationLevel++;
 
         //'static' or 'field'
@@ -629,19 +629,29 @@ public class CompilationEngine {
                 vmWriter.writePop("pointer", 1);
                 vmWriter.writePush("that", 0);
                 tokenizer.advance();
-            } else if (tokenizer.tokenType() == TokenType.SYMBOL && tokenizer.symbol() == '.') {
+            }
+            else if (tokenizer.tokenType() == TokenType.SYMBOL && tokenizer.symbol() == '.') {
                 tokenizer.advance(); // name of the function
                 if (tokenizer.tokenType() != TokenType.IDENTIFIER)
                     throw new VariableNameNotFoundException();
                 String subroutineName = tokenizer.identifier();
+                int argCount = 0;
 
-                tokenizer.advance();
+                if (symbolTable.kindOf(name) != SymbolTable.Kind.NONE) {
+                    vmWriter.writePush(symbolTable.kindOf(name).toString().toLowerCase(), symbolTable.indexOf(name));
+                    name = symbolTable.typeOf(name);
+                    argCount++;
+                }
+                name += "." + subroutineName;
+
+                tokenizer.advance(); //(
                 if (!(tokenizer.tokenType() == TokenType.SYMBOL && tokenizer.symbol() == '('))
                     throw new InvalidClosingBracketsException();
 
                 tokenizer.advance();
-                int argCount = compileExpressionList();
-                vmWriter.writeCall(name + "." + subroutineName, argCount);
+                argCount += compileExpressionList();
+
+                vmWriter.writeCall(name , argCount);
 
             } else if (tokenizer.tokenType() == TokenType.SYMBOL && tokenizer.symbol() == '(') {
                 tokenizer.advance();
