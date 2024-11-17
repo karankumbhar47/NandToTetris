@@ -3,6 +3,7 @@ package com.compiler;
 import com.compiler.CompilationClasses.*;
 import com.compiler.CustomExceptions.SyntaxExceptions;
 import com.compiler.CustomExceptions.SyntaxExceptions.*;
+import com.compiler.Utils.EnumClass;
 import com.compiler.Utils.EnumClass.KeywordType;
 import com.compiler.Utils.EnumClass.TokenType;
 import com.compiler.Utils.VMUtils;
@@ -14,11 +15,9 @@ public class CompilationEngine {
     public final VMWriter vmWriter;
     public final JackTokenizer tokenizer;
     public final SymbolTable symbolTable;
-    public int indentationLevel;
 
 
     public CompilationEngine(Path outputVMFilePath, JackTokenizer tokenizer) throws IOException {
-        this.indentationLevel = 0;
         this.tokenizer = tokenizer;
         this.symbolTable = new SymbolTable();
         this.vmWriter = new VMWriter(outputVMFilePath.toString());
@@ -29,7 +28,7 @@ public class CompilationEngine {
     }
 
     public void compileClassVarDec() throws IOException,SyntaxExceptions {
-        new CompileVarDec(this).compile();
+        new CompileClassVarDec(this).compile();
     }
 
     public void compileSubroutine(String className) throws IOException, SyntaxExceptions {
@@ -41,7 +40,7 @@ public class CompilationEngine {
     }
 
     public void compileSubroutineBody(String className,String subroutineName, String subroutineType) throws IOException, SyntaxExceptions {
-        new CompileSubroutineBody(this,className,subroutineName,subroutineType);
+        new CompileSubroutineBody(this,className,subroutineName,subroutineType).compile();
     }
 
     public void compileVarDec() throws IOException,SyntaxExceptions {
@@ -88,4 +87,48 @@ public class CompilationEngine {
         vmWriter.close();
     }
 
+    public void ensureSymbol(char expectedSymbol,String errorMessage) throws SyntaxExceptions {
+        if (!(tokenizer.tokenType() == TokenType.SYMBOL && tokenizer.symbol() == expectedSymbol)) {
+            VMUtils.throwError(errorMessage);
+        }
+    }
+
+    public void ensureKeyword(KeywordType expectedKeyword, String errorMessage) throws SyntaxExceptions {
+        if (!(tokenizer.tokenType() == TokenType.KEYWORD && tokenizer.keyWord() == expectedKeyword)) {
+            VMUtils.throwError(errorMessage);
+        }
+    }
+
+    public void ensureIdentifier(String errorMessage) throws SyntaxExceptions {
+        if (tokenizer.tokenType() != TokenType.IDENTIFIER) {
+            VMUtils.throwError(errorMessage);
+        }
+    }
+
+    public void ensureType(String errorMessage) throws SyntaxExceptions {
+        if (!(tokenizer.tokenType() == TokenType.KEYWORD &&
+                (tokenizer.keyWord() == KeywordType.INT ||
+                        tokenizer.keyWord() == KeywordType.CHAR ||
+                        tokenizer.keyWord() == KeywordType.BOOLEAN)) &&
+                tokenizer.tokenType() != TokenType.IDENTIFIER) {
+            VMUtils.throwError(errorMessage);
+        }
+    }
+
+    public void ensureClassVarType(String errorMessage) throws SyntaxExceptions {
+        if(!(tokenizer.tokenType() == EnumClass.TokenType.KEYWORD &&
+                (tokenizer.keyWord() == EnumClass.KeywordType.STATIC
+                        || tokenizer.keyWord() == EnumClass.KeywordType.FIELD))) {
+            VMUtils.throwError(errorMessage);
+        }
+    }
+
+    public void ensureFunctionType() throws SyntaxExceptions{
+        if (!(tokenizer.tokenType() == EnumClass.TokenType.KEYWORD &&
+                (tokenizer.keyWord().equals(EnumClass.KeywordType.CONSTRUCTOR) ||
+                        tokenizer.keyWord().equals(EnumClass.KeywordType.FUNCTION) ||
+                        tokenizer.keyWord().equals(EnumClass.KeywordType.METHOD)))) {
+           VMUtils.throwError("Expected 'constructor', 'function', or 'method' at start of subroutineDec.");
+        }
+    }
 }

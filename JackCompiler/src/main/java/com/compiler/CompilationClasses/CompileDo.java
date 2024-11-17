@@ -23,58 +23,42 @@ public class CompileDo {
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-        // do
-        parent.indentationLevel++;
-
         tokenizer.advance(); // name of the function / class
-        if (tokenizer.tokenType() != EnumClass.TokenType.IDENTIFIER)
-            throw new SyntaxExceptions.InvalidIdentifierException();
+        parent.ensureIdentifier("Expected valid identifier as function name or class name");
 
         String classNameMethod = tokenizer.identifier();
-        boolean isMethod = false;
         int argCount = 0;
 
         tokenizer.advance(); // . or (
         if (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '.') {
             tokenizer.advance(); // name of the function
-            if (tokenizer.tokenType() != EnumClass.TokenType.IDENTIFIER)
-                throw new SyntaxExceptions.InvalidIdentifierException();
-
+            parent.ensureIdentifier("Expected valid identifier as function Name");
 
             if (symbolTable.kindOf(classNameMethod) != SymbolTable.Kind.NONE) {
-                // `name` is an object, push the object as the first argument
                 vmWriter.writePush(symbolTable.kindOf(classNameMethod).toString().toLowerCase(), symbolTable.indexOf(classNameMethod));
                 classNameMethod = symbolTable.typeOf(classNameMethod) +"." + tokenizer.identifier();
-                isMethod = true; // Object calls are methods
                 argCount++;
-            } else {
-                // `name` is a class
+            } else
                 classNameMethod += "." + tokenizer.identifier();
-            }
+
             tokenizer.advance(); // (
-            if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '('))
-                throw new SyntaxExceptions.InvalidOpeningBracketsException();
+            parent.ensureSymbol('(', "Expected `(` in declaration function call");
         } else if (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '(') {
             // Implicit method call on `this`
             vmWriter.writePush("pointer", 0); // Push `this` as the first argument
             classNameMethod = className + "." + classNameMethod; // Add class context to the method name
-            isMethod = true;
             argCount++;
         } else
             throw new SyntaxExceptions.InvalidOpeningBracketsException();
 
         tokenizer.advance();
-        argCount += new CompileExpressionList(parent).compile();
+        argCount += parent.compileExpressionList();
 
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ';'))
-            throw new SyntaxExceptions.SemicolonNotFoundException();
+        parent.ensureSymbol(';', "Expected `;` at the end of function call declaration");
 
         vmWriter.writeCall(classNameMethod, argCount);
-
         // Discard the return value for a `do` statement
         vmWriter.writePop("temp", 0);
-
-        parent.indentationLevel--;
         tokenizer.advance();
     }
 }

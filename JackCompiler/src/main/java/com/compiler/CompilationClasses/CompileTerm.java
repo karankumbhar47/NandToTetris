@@ -21,8 +21,6 @@ public class CompileTerm {
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-        parent.indentationLevel++;
-
         if (tokenizer.tokenType() == EnumClass.TokenType.INT_CONST) {
             vmWriter.writePush("constant", tokenizer.intVal());
             tokenizer.advance();
@@ -60,7 +58,7 @@ public class CompileTerm {
                 (tokenizer.symbol() == '~' || tokenizer.symbol() == '-')) {
             char unaryOp = tokenizer.symbol();
             tokenizer.advance();
-            new CompileTerm(parent).compile();
+            parent.compileTerm();
             if (unaryOp == '~') {
                 vmWriter.writeArithmetic("not");
             } else if (unaryOp == '-') {
@@ -69,7 +67,7 @@ public class CompileTerm {
         }
         else if (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '(') {
             tokenizer.advance();
-            new CompileExpression(parent).compile();
+            parent.compileExpression();
 
             if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ')'))
                 throw new SyntaxExceptions.InvalidClosingBracketsException();
@@ -83,10 +81,8 @@ public class CompileTerm {
                 vmWriter.writePush(symbolTable.kindOf(name).toString().toLowerCase(), symbolTable.indexOf(name));
 
                 tokenizer.advance();
-                new CompileExpression(parent).compile();
-
-                if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ']'))
-                    throw new SyntaxExceptions.InvalidClosingBracketsException();
+                parent.compileExpression();
+                parent.ensureSymbol(']', "Expected `]` at the end of array Expression");
 
                 vmWriter.writeArithmetic("add");
                 vmWriter.writePop("pointer", 1);
@@ -95,8 +91,8 @@ public class CompileTerm {
             }
             else if (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '.') {
                 tokenizer.advance(); // name of the function
-                if (tokenizer.tokenType() != EnumClass.TokenType.IDENTIFIER)
-                    throw new SyntaxExceptions.VariableNameNotFoundException();
+
+                parent.ensureIdentifier("Expected valid identifier as function Name");
                 String subroutineName = tokenizer.identifier();
                 int argCount = 0;
 
@@ -108,27 +104,23 @@ public class CompileTerm {
                 name += "." + subroutineName;
 
                 tokenizer.advance(); //(
-                if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '('))
-                    throw new SyntaxExceptions.InvalidClosingBracketsException();
+                parent.ensureSymbol('(', "Expected `(` in declaration function call");
 
                 tokenizer.advance();
-                argCount += new CompileExpressionList(parent).compile();
+                argCount += parent.compileExpressionList();
 
                 vmWriter.writeCall(name , argCount);
-
-            } else if (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '(') {
+            }
+            else if (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '(') {
                 tokenizer.advance();
-                int argCount = new CompileExpressionList(parent).compile();
+                int argCount = parent.compileExpressionList();
+
                 vmWriter.writeCall(name, argCount);
-
-                if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ')'))
-                    throw new SyntaxExceptions.InvalidClosingBracketsException();
                 tokenizer.advance();
-            } else {
+            }
+            else {
                 vmWriter.writePush(symbolTable.kindOf(name).toString().toLowerCase(), symbolTable.indexOf(name));
             }
         }
-
-        parent.indentationLevel--;
     }
 }

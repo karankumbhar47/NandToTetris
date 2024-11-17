@@ -15,27 +15,22 @@ public class CompileClass {
     }
 
     public void compile() throws IOException, SyntaxExceptions{
-        parent.indentationLevel++;
         JackTokenizer tokenizer = parent.tokenizer;
 
-
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.KEYWORD && tokenizer.keyWord() == EnumClass.KeywordType.CLASS))
-            throw new SyntaxExceptions.IllegalClassKeywordException();
+        parent.ensureKeyword(EnumClass.KeywordType.CLASS,
+                "Expected Keyword `class` at the start of the class declaration");
 
         tokenizer.advance(); // Class name
-        String className;
-        if (tokenizer.tokenType() == EnumClass.TokenType.IDENTIFIER)
-            className = tokenizer.identifier();
-        else throw new SyntaxExceptions.IllegalClassNameException();
+        parent.ensureIdentifier("Expected a valid class Name as  a Identifier");
+        String className = tokenizer.identifier();
 
         tokenizer.advance(); // '{'
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '{'))
-            throw new SyntaxExceptions.InvalidOpeningBracketsException();
+        parent.ensureSymbol('{',"Expected an opening curly brace `{` after the class declaration");
 
         tokenizer.advance(); // class var dec
         while (tokenizer.tokenType() == EnumClass.TokenType.KEYWORD &&
                 (tokenizer.keyWord() == EnumClass.KeywordType.STATIC || tokenizer.keyWord() == EnumClass.KeywordType.FIELD)) {
-            new CompileClassVarDec(parent,className).compile();
+            parent.compileClassVarDec();
         }
 
         // Compile subroutine declarations
@@ -43,15 +38,11 @@ public class CompileClass {
                 (tokenizer.keyWord() == EnumClass.KeywordType.CONSTRUCTOR ||
                         tokenizer.keyWord() == EnumClass.KeywordType.FUNCTION ||
                         tokenizer.keyWord() == EnumClass.KeywordType.METHOD)) {
-            new CompileSubroutine(parent,className).compile();
+            parent.compileSubroutine(className);
         }
 
         // '}'
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '}')) {
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
-        }
-
-        parent.indentationLevel--;
+        parent.ensureSymbol('}',"Expected a closing curly brace `}` to end the class declaration");
         tokenizer.advance();
     }
 

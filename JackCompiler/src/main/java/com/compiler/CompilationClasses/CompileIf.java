@@ -3,7 +3,6 @@ package com.compiler.CompilationClasses;
 import com.compiler.CompilationEngine;
 import com.compiler.CustomExceptions.SyntaxExceptions;
 import com.compiler.JackTokenizer;
-import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
 import com.compiler.Utils.VMUtils;
 import com.compiler.VMWriter;
@@ -14,46 +13,37 @@ public class CompileIf {
     private final CompilationEngine parent;
     private final String className;
 
-    public CompileIf(CompilationEngine parent,String className) {
+    public CompileIf(CompilationEngine parent, String className) {
         this.parent = parent;
         this.className = className;
     }
 
     public void compile() throws IOException, SyntaxExceptions {
-        SymbolTable symbolTable = parent.symbolTable;
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-
-        String labelTrue = "IF_TRUE_" + VMUtils.generateUniqueLabel();
+        // if
         String labelFalse = "IF_FALSE_" + VMUtils.generateUniqueLabel();
         String labelEnd = "IF_END_" + VMUtils.generateUniqueLabel();
 
-        // if
-        parent.indentationLevel++;
-
         tokenizer.advance(); // (
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '('))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol('(', "Expected `(` after the `IF` keyword");
 
         tokenizer.advance(); // expression
-        new CompileExpression(parent).compile();
+        parent.compileExpression();
 
         vmWriter.writeArithmetic("not");
         vmWriter.writeIf(labelFalse);
 
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ')'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol(')', "Expected `)` at the end of IF condition");
 
         tokenizer.advance(); // {
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '{'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol('{', "Expected `{` at start of the if Body");
 
         tokenizer.advance();
-        new CompileStatements(parent,className).compile(); // statements
+        parent.compileStatements(className); // statements
 
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '}'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol('}', "Expected `}` at end of the if Body");
 
         vmWriter.writeGoto(labelEnd); // Jump to end
         vmWriter.writeLabel(labelFalse); // False label
@@ -63,21 +53,17 @@ public class CompileIf {
             tokenizer.advance();
             if (tokenizer.tokenType() == EnumClass.TokenType.KEYWORD && tokenizer.keyWord().equals(EnumClass.KeywordType.ELSE)) {
                 tokenizer.advance(); // '{'
-                if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '{'))
-                    throw new SyntaxExceptions.InvalidClosingBracketsException();
+                parent.ensureSymbol('{', "Expected `{` at start of the else Body");
 
                 tokenizer.advance(); // statements inside else
-                new CompileStatements(parent,className).compile();
+                parent.compileStatements(className);
 
-                if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '}'))
-                    throw new SyntaxExceptions.InvalidClosingBracketsException();
-
+                parent.ensureSymbol('}', "Expected `{` at end of the else Body");
                 tokenizer.advance();
             }
         }
 
         vmWriter.writeLabel(labelEnd);
-        parent.indentationLevel--;
     }
 
 }

@@ -3,8 +3,6 @@ package com.compiler.CompilationClasses;
 import com.compiler.CompilationEngine;
 import com.compiler.CustomExceptions.SyntaxExceptions;
 import com.compiler.JackTokenizer;
-import com.compiler.SymbolTable;
-import com.compiler.Utils.EnumClass;
 import com.compiler.Utils.VMUtils;
 import com.compiler.VMWriter;
 
@@ -20,12 +18,9 @@ public class CompileWhile {
     }
 
     public void compile() throws IOException, SyntaxExceptions {
-        SymbolTable symbolTable = parent.symbolTable;
+        // while
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
-
-        // while
-        parent.indentationLevel++;
 
         String labelStart = "WHILE_START_" + VMUtils.generateUniqueLabel();
         String labelEnd = "WHILE_END_" + VMUtils.generateUniqueLabel();
@@ -33,31 +28,25 @@ public class CompileWhile {
         vmWriter.writeLabel(labelStart);
 
         tokenizer.advance(); //(
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '('))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol('(', "Expected `(` after the `while` keyword");
 
         tokenizer.advance(); // expression inside bracket
-        new CompileExpression(parent).compile();
+        parent.compileExpression();
 
         vmWriter.writeArithmetic("not");
         vmWriter.writeIf(labelEnd);
 
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ')'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol(')', "Expected `)` at the end of while condition");
 
         tokenizer.advance(); // {
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '{'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
+        parent.ensureSymbol('{', "Expected `{` at start of the while Body");
 
         tokenizer.advance(); // statements inside while
-        new CompileStatements(parent,className).compile();
+        parent.compileStatements(className);
 
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '}'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
-
+        parent.ensureSymbol('}', "Expected `}` at end of the while Body");
         vmWriter.writeGoto(labelStart);
         vmWriter.writeLabel(labelEnd);
         tokenizer.advance();
-        parent.indentationLevel--;
     }
 }

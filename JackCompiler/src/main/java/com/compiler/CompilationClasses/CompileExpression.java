@@ -3,7 +3,6 @@ package com.compiler.CompilationClasses;
 import com.compiler.CompilationEngine;
 import com.compiler.CustomExceptions.SyntaxExceptions;
 import com.compiler.JackTokenizer;
-import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
 import com.compiler.VMWriter;
 
@@ -17,14 +16,10 @@ public class CompileExpression {
     }
 
     public void compile() throws IOException, SyntaxExceptions {
-        SymbolTable symbolTable = parent.symbolTable;
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-
-        parent.indentationLevel++;
-
-        new CompileTerm(parent).compile();
+        parent.compileTerm();
 
         while (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL &&
                 (tokenizer.symbol() == '+' || tokenizer.symbol() == '-' || tokenizer.symbol() == '/'
@@ -33,7 +28,7 @@ public class CompileExpression {
 
             char operator = tokenizer.symbol();
             tokenizer.advance(); // Move to the next term
-            new CompileTerm(parent).compile();
+            parent.compileTerm();
 
             // Write VM command for the operator
             switch (operator) {
@@ -66,7 +61,5 @@ public class CompileExpression {
                     break;
             }
         }
-
-        parent.indentationLevel--;
     }
 }

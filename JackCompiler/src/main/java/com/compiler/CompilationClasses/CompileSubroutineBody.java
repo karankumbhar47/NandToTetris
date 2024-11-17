@@ -27,17 +27,14 @@ public class CompileSubroutineBody {
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-        parent.indentationLevel++;
-
         // {
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '{'))
-            throw new SyntaxExceptions.InvalidOpeningBracketsException();
+        parent.ensureSymbol('{', "Expected `{` at start of the function Body");
 
         // check if any function var
         tokenizer.advance();
         while (tokenizer.tokenType() == EnumClass.TokenType.KEYWORD &&
                 tokenizer.keyWord().equals(EnumClass.KeywordType.VAR))
-            new CompileVarDec(parent).compile();
+            parent.compileVarDec();
 
         // Write VM function declaration after parsing all local variables
         int localCount = symbolTable.varCount(SymbolTable.Kind.LOCAL);
@@ -53,13 +50,9 @@ public class CompileSubroutineBody {
         }
 
         // Compile statements
-        new CompileStatements(parent,className).compile();
-
+        parent.compileStatements(className);
         // Closing '}'
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '}'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
-
-        parent.indentationLevel--;
+        parent.ensureSymbol('}', "Expected `}` at end of the function Body");
         tokenizer.advance();
     }
 }

@@ -5,7 +5,6 @@ import com.compiler.CustomExceptions.SyntaxExceptions;
 import com.compiler.JackTokenizer;
 import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
-import com.compiler.VMWriter;
 
 import java.io.IOException;
 
@@ -17,23 +16,17 @@ public class CompileVarDec {
     }
 
     public void compile() throws IOException, SyntaxExceptions {
+        //var
         SymbolTable symbolTable = parent.symbolTable;
         JackTokenizer tokenizer = parent.tokenizer;
-        VMWriter vmWriter = parent.vmWriter;
-
-        //var
-        parent.indentationLevel++;
 
         tokenizer.advance(); // type of variable
         if (!(tokenizer.tokenType() == EnumClass.TokenType.KEYWORD || tokenizer.tokenType() == EnumClass.TokenType.IDENTIFIER))
             throw new SyntaxExceptions.InvalidFunctionVariableKeywordException();
-
         String type = tokenizer.tokenType() == EnumClass.TokenType.KEYWORD ? tokenizer.keyWord().toString() : tokenizer.identifier();
 
         tokenizer.advance(); // name of variable
-        if (tokenizer.tokenType() != EnumClass.TokenType.IDENTIFIER)
-            throw new SyntaxExceptions.VariableNameNotFoundException();
-
+        parent.ensureIdentifier("Expected valid identifier for variable name");
         String varName = tokenizer.identifier();
         symbolTable.define(varName, type, SymbolTable.Kind.LOCAL);
 
@@ -41,14 +34,14 @@ public class CompileVarDec {
         while (tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol()==',') {
             tokenizer.advance(); // var name
 
-            if (tokenizer.tokenType() != EnumClass.TokenType.IDENTIFIER)
-                throw new SyntaxExceptions.VariableNameNotFoundException();
+            parent.ensureIdentifier("Expected valid identifier for variable name");
             varName = tokenizer.identifier();
             symbolTable.define(varName, type, SymbolTable.Kind.LOCAL);
+
             tokenizer.advance(); //, or ;
         }
 
+        parent.ensureSymbol(';',"Expected `;` at the end of Variable declaration");
         tokenizer.advance();
-        parent.indentationLevel--;
     }
 }

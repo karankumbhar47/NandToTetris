@@ -5,7 +5,6 @@ import com.compiler.CustomExceptions.SyntaxExceptions;
 import com.compiler.JackTokenizer;
 import com.compiler.SymbolTable;
 import com.compiler.Utils.EnumClass;
-import com.compiler.VMWriter;
 
 import java.io.IOException;
 
@@ -19,9 +18,6 @@ public class CompileParameterList {
     public void compile() throws IOException, SyntaxExceptions {
         SymbolTable symbolTable = parent.symbolTable;
         JackTokenizer tokenizer = parent.tokenizer;
-        VMWriter vmWriter = parent.vmWriter;
-
-        parent.indentationLevel++;
 
         // Parameter list begins
         if (tokenizer.tokenType() == EnumClass.TokenType.KEYWORD || tokenizer.tokenType() == EnumClass.TokenType.IDENTIFIER) {
@@ -32,6 +28,7 @@ public class CompileParameterList {
                         : tokenizer.identifier();
 
                 tokenizer.advance(); // Variable name
+                parent.ensureIdentifier("Expected valid variable name as identifier");
                 String varName = tokenizer.identifier();
 
                 symbolTable.define(varName, type, SymbolTable.Kind.ARGUMENT); // Add to symbol table
@@ -43,7 +40,5 @@ public class CompileParameterList {
                 tokenizer.advance(); // var type next
             }
         }
-
-        parent.indentationLevel--;
     }
 }

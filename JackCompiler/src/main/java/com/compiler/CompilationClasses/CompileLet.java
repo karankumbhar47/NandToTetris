@@ -17,17 +17,13 @@ public class CompileLet {
     }
 
     public void compile() throws IOException, SyntaxExceptions {
+        // let
         SymbolTable symbolTable = parent.symbolTable;
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-
-        // let
-        parent.indentationLevel++;
-
         tokenizer.advance(); // variable name
-        if (tokenizer.tokenType() != EnumClass.TokenType.IDENTIFIER)
-            throw new SyntaxExceptions.VariableNameNotFoundException();
+        parent.ensureIdentifier("Expected valid identifier for variable name");
         String varName = tokenizer.identifier();
 
         tokenizer.advance();
@@ -37,23 +33,18 @@ public class CompileLet {
             vmWriter.writePush(symbolTable.kindOf(varName).toString().toLowerCase(), symbolTable.indexOf(varName));
 
             tokenizer.advance(); // expression inside []
-            new CompileExpression(parent).compile();
+            parent.compileExpression();
 
             // skip ]
-            if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ']'))
-                throw new SyntaxExceptions.InvalidClosingBracketsException();
-
+            parent.ensureSymbol(']', "Expected `]` at the end of array Expression");
             vmWriter.writeArithmetic("add");
-
             tokenizer.advance(); // =
         }
 
         // expression after assignment =
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == '='))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
-
+        parent.ensureSymbol('=', "Expected `=` in the let statement assignment");
         tokenizer.advance();
-        new CompileExpression(parent).compile();
+        parent.compileExpression();
 
         if (isArray) {
             vmWriter.writePop("temp", 0);
@@ -64,11 +55,8 @@ public class CompileLet {
             vmWriter.writePop(symbolTable.kindOf(varName).toString().toLowerCase(), symbolTable.indexOf(varName));
 
         // ;
-        if (!(tokenizer.tokenType() == EnumClass.TokenType.SYMBOL && tokenizer.symbol() == ';'))
-            throw new SyntaxExceptions.InvalidClosingBracketsException();
-
+        parent.ensureSymbol(';', "Expected `;` at the end of let statement");
         tokenizer.advance();
-        parent.indentationLevel--;
     }
 
 }
