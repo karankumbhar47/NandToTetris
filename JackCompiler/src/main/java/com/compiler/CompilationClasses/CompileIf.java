@@ -23,8 +23,8 @@ public class CompileIf {
         VMWriter vmWriter = parent.vmWriter;
 
         // if
-        String labelFalse = "IF_FALSE_" + VMUtils.generateUniqueLabel();
-        String labelEnd = "IF_END_" + VMUtils.generateUniqueLabel();
+        String labelFalse = "IF_TRUE" + VMUtils.generateUniqueLabel(EnumClass.Label.IF_TRUE);
+        String labelEnd = "IF_FALSE" + VMUtils.generateUniqueLabel(EnumClass.Label.IF_FALSE);
 
         tokenizer.advance(); // (
         parent.ensureSymbol('(', "Expected `(` after the `IF` keyword");

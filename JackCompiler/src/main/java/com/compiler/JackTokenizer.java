@@ -4,12 +4,14 @@ import com.compiler.Utils.Context;
 import com.compiler.Utils.EnumClass.TokenType;
 import com.compiler.Utils.EnumClass.KeywordType;
 import com.compiler.Utils.TokenizerUtils;
+import com.compiler.Utils.VMUtils;
 
 import java.io.*;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import static com.compiler.Utils.TokenizerUtils.keywordMap;
 
@@ -27,6 +29,7 @@ public class JackTokenizer {
         this.tokens = new ArrayList<>();
         this.currentTokenIndex = -1;
         this.fileName = filePath.getFileName().toString();
+        VMUtils.setLabelCounter();
         tokenize(filePath);
     }
 
@@ -39,10 +42,34 @@ public class JackTokenizer {
             fileContent.append(currentLine).append("\n");
         }
 
-        String input = fileContent
-                .toString()
-                .replaceAll("//.*|/\\*\\*?[\\s\\S]*?\\*/", "#");
-        BufferedReader cleanReader = new BufferedReader(new StringReader(input));
+//        String input = fileContent
+//                .toString()
+//                .replaceAll("//.*|/\\*\\*?[\\s\\S]*?\\*/", " ");
+//        String input = fileContent
+//                .toString()
+//                .replaceAll("//.*", "")  // Remove single-line comments
+//                .replaceAll("/\\*\\*?[\\s\\S]*?\\*/", match -> {
+//                    // Count line breaks in multi-line comments
+//                    int newLines = (int) match.chars().filter(ch -> ch == '\n').count();
+//                    return "\n".repeat(newLines);
+//                });
+
+        // Remove single-line and multi-line comments while preserving line breaks
+        String input = fileContent.toString();
+        input = input.replaceAll("//.*", ""); // Remove single-line comments
+
+        // Use Pattern and Matcher to replace multi-line comments
+        Pattern multilineCommentPattern = Pattern.compile("/\\*\\*?[\\s\\S]*?\\*/");
+        Matcher matcher = multilineCommentPattern.matcher(input);
+        StringBuffer cleanedInput = new StringBuffer();
+        while (matcher.find()) {
+            String match = matcher.group();
+            int lineBreaks = (int) match.chars().filter(ch -> ch == '\n').count();
+            matcher.appendReplacement(cleanedInput, "\n".repeat(lineBreaks)); // Replace comment with line breaks
+        }
+        matcher.appendTail(cleanedInput);
+
+        BufferedReader cleanReader = new BufferedReader(new StringReader(cleanedInput.toString()));
 
         int lineNumber = 0;
         while ((currentLine = cleanReader.readLine()) != null) {

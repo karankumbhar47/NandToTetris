@@ -1,6 +1,7 @@
 package com.compiler.CompilationClasses;
 
 import com.compiler.CompilationEngine;
+import com.compiler.Utils.EnumClass;
 import com.compiler.Utils.SyntaxExceptions;
 import com.compiler.JackTokenizer;
 import com.compiler.Utils.VMUtils;
@@ -22,8 +23,8 @@ public class CompileWhile {
         JackTokenizer tokenizer = parent.tokenizer;
         VMWriter vmWriter = parent.vmWriter;
 
-        String labelStart = "WHILE_START_" + VMUtils.generateUniqueLabel();
-        String labelEnd = "WHILE_END_" + VMUtils.generateUniqueLabel();
+        String labelStart = "WHILE_EXP" + VMUtils.generateUniqueLabel(EnumClass.Label.WHILE_EXP);
+        String labelEnd = "WHILE_END" + VMUtils.generateUniqueLabel(EnumClass.Label.WHILE_END);
 
         vmWriter.writeLabel(labelStart);
 

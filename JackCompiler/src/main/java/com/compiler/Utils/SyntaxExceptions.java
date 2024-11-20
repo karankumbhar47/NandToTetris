@@ -7,7 +7,7 @@ public class SyntaxExceptions extends Exception{
 
     private static String getFormattedMessage(String message,Context context){
         return "\nSyntax Error in file: " + context.getFileName() + "\n" +
-                "Line : " + context.getCurrentLine() + "\n" +
+                "Line "+context.getLineNumber()+": " + context.getCurrentLine() + "\n" +
                 "Message: " + message + "\n" +
                 "Offending Token: " + context.getCurrentToken() +"\n";
     }

@@ -11,4 +11,8 @@ public class EnumClass {
     public enum TokenType {
         KEYWORD, SYMBOL, IDENTIFIER, INT_CONST, STRING_CONST
     }
+
+    public enum Label {
+        IF_TRUE,IF_FALSE,WHILE_EXP,WHILE_END
+    }
 }
