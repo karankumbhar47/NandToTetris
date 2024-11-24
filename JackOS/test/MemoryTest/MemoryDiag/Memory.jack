@@ -1,0 +1,174 @@
+// This file is part of www.nand2tetris.org
+// and the book "The Elements of Computing Systems"
+// by Nisan and Schocken, MIT Press.
+// File name: projects/12/Memory.jack
+/**
+ * This library provides two services: direct access to the computer's main
+ * memory (RAM), and allocation and recycling of memory blocks. The Hack RAM
+ * consists of 32,768 words, each holding a 16-bit binary number.
+ */ 
+class Memory {
+    static Array RAM;
+    static Array freeList;
+
+    static int nextPointer;
+    static int lengthPointer;
+
+    static int heap_end;
+    static int heap_size;
+    static int heap_start;
+
+    /** Initializes the class. */
+    function void init() {
+        let heap_start = 2048;
+        let heap_end = 16384;
+        let heap_size = heap_end - heap_start;
+
+        let RAM = 0;
+        let nextPointer = 1;
+        let lengthPointer = 0;
+
+        let freeList = heap_start;
+        let freeList[lengthPointer] = heap_size;
+        let freeList[nextPointer] = null;
+        
+        return;
+    }
+
+    /** Returns the RAM value at the given address. */
+    function int peek(int address) {
+        return RAM[address];
+    }
+
+    /** Sets the RAM value at the given address to the given value. */
+    function void poke(int address, int value) {
+        let RAM[address] = value;
+        return;
+    }
+
+    /** Finds an available RAM block of the given size and returns
+     *  a reference to its base address. */
+    function int alloc(int size) {
+        var Array prev_block;
+        var Array bestFit_block;
+
+        let bestFit_block = Memory.free_previousBlock(size);
+        if (prev_block = heap_end) {
+            return null;
+        }
+
+        if (prev_block = null) {
+            let bestFit_block = freeList;
+            let freeList = Memory.fragment_block(bestFit_block, size);
+        } else {
+            let bestFit_block = prev_block[nextPointer];
+            let prev_block[nextPointer] = Memory.fragment_block(bestFit_block, size);
+        }
+
+        return bestFit_block + 1;
+       
+    }
+
+    /** De-allocates the given object (cast as an array) by making
+     *  it available for future allocations. */
+    function void deAlloc(Array o) {
+        var Array block_pointer, prev_block;
+
+        let block_pointer = o - 1;
+        let prev_block = Memory.free_previousBlock(block_pointer);
+
+        // if first block in best fit one
+        if (prev_block = null) {
+            let block_pointer[nextPointer] = freeList;
+            let freeList = block_pointer;
+        } else {
+            let block_pointer[nextPointer] = prev_block[nextPointer];
+            let prev_block[nextPointer] = block_pointer;
+            let block_pointer = Memory.defrag_blocks(prev_block, block_pointer);
+        }
+
+        do Memory.defrag_blocks(block_pointer,block_pointer[nextPointer]);
+
+        return;
+
+    }    
+
+
+    // finding block that previous to
+    // best fit block in free list
+    function Array bestFit_prevBlock(int size) {
+       // previous to best block
+        var int curr_blockSize;
+        var int bestFit_blockSize;
+        var Array prevBestFit_block; 
+        var Array prev_block, curr_block;
+
+        let prev_block = null;
+        let curr_block = freeList;
+        let prevBestFit_block = heap_end;
+        let bestFit_blockSize = heap_size;
+
+        while (~(curr_block = null)) {
+            let curr_blockSize = curr_block[lengthPointer] - 1;
+            if (~(curr_blockSize< size) & (curr_blockSize < bestFit_blockSize)) {
+                let prevBestFit_block = prev_block;
+                let bestFit_blockSize = curr_blockSize;
+            }
+            let prev_block = curr_block;
+            let curr_block = curr_block[nextPointer];
+        }
+
+        return prevBestFit_block;
+    }
+
+
+    // creating new block from remaining memory
+    // returning next block address
+    function Array fragment_block(Array block, int block_size) {
+        var int remMem_size;
+        var Array next_block;
+
+        let remMem_size = block[lengthPointer] - (block_size + 1);
+        if (remMem_size < 3) {
+            return block[nextPointer];
+        } else {
+            // creating new block
+            let block[lengthPointer] =  block_size;   
+            let next_block = block + block_size + 1;
+            let next_block[lengthPointer] = remMem_size;
+            let next_block[nextPointer] = block[nextPointer];
+            return next_block;
+        }
+    }
+
+
+    // free block before the given block(occupied)
+    function Array free_previousBlock(Array block) {
+        var Array curr_block;
+
+        if (freeList > block) {
+            return null;
+        }
+
+        let curr_block = freeList;
+        while (~(curr_block[nextPointer] = null) & (curr_block[nextPointer] < block)) {
+            let curr_block = curr_block[nextPointer];
+        }
+
+        return curr_block;
+    }
+
+
+    // merging adjacent block
+    function Array defrag_blocks(Array curr_block, Array next_block) {
+        // 
+        if ((curr_block + curr_block[lengthPointer]) = next_block) {
+            let curr_block[nextPointer] = next_block[nextPointer];
+            let curr_block[lengthPointer] = curr_block[lengthPointer] + next_block[lengthPointer];
+            return curr_block;
+        }
+
+        // merging not possible
+        return next_block;
+    }
+}

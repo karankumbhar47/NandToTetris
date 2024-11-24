@@ -76,6 +76,12 @@ After building the project, you can run the JackCompiler tool using the generate
 - The output files will have the same name as the .jack files but with the .vm extension.
 - You can find test .jack files in the /src/main/resources/JackFiles/ directory, useful for verifying the generated vm files.
 
+### Testing
+- For this project, use the description given in [PDF](./project.pdf) for testing each program
+- Read the description from [PDF](./project.pdf).
+- Run the generated vm code in VMEmulator
+- Match the output mentioned in [PDF](./project.pdf).
+
 ### Using JackCompiler Without Maven
 
 If you prefer not to use Maven, you can compile and run the project manually using a provided script. Ensure you are in the root directory of the project and follow these steps:
